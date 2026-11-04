@@ -124,7 +124,10 @@
                     <div class="form-group"><label class="text-xs font-bold text-gray-700">Encaminhados à DP</label><input type="number" id="p-encam" value="" min="0" class="w-full p-2 border border-gray-300 rounded mt-1 shadow-sm font-medium"></div>
                     <div class="form-group"><label class="text-xs font-bold text-gray-700">Menores apreendidos</label><input type="number" id="p-menor" value="" min="0" class="w-full p-2 border border-gray-300 rounded mt-1 shadow-sm font-medium"></div>
                     <div class="form-group"><label class="text-xs font-bold text-gray-700">Presos Flag/TCO</label><input type="number" id="p-preso" value="" min="0" class="w-full p-2 border border-gray-300 rounded mt-1 shadow-sm font-medium"></div>
-                    <div class="form-group"><label class="text-xs font-bold text-gray-700">Mandados cumpridos</label><input type="number" id="p-mandado" value="" min="0" class="w-full p-2 border border-gray-300 rounded mt-1 shadow-sm font-medium"></div>
+                    <div class="form-group">
+                        <label class="text-xs font-bold text-gray-700">Mandados cumpridos</label>
+                        <input type="number" id="p-mandado" value="0" min="0" class="w-full p-2 border border-gray-300 rounded mt-1 shadow-sm font-medium bg-gray-100 cursor-pointer" readonly onclick="document.getElementById('detalhamento-mandados-box').scrollIntoView({ behavior: 'smooth' });" title="Preenchido através do Detalhamento de Mandados abaixo">
+                    </div>
                 </div>
 
                 <!-- Detalhamento de Veículos -->
@@ -193,6 +196,66 @@
                         <ul id="lista-veiculos" class="text-sm mt-5 list-disc pl-5 text-gray-700 font-medium space-y-1"></ul>
                     </div>
                 </div>
+                <!-- Detalhamento de Mandados Cumpridos -->
+                <div class="border-t-2 border-slate-200 pt-6">
+                    <div id="detalhamento-mandados-box" class="border border-gray-300 rounded-lg p-6 bg-gray-50 shadow-inner">
+                        <h4 class="font-bold text-pm-marinho mb-6 uppercase text-sm border-b pb-2">Mandados Cumpridos (Detalhamento)</h4>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                            
+                            <!-- Coluna 1: Sexo (Esquerda) -->
+                            <div class="lg:col-span-3 flex flex-col gap-3">
+                                <span class="text-xs font-bold text-gray-700 uppercase tracking-wider block">Sexo</span>
+                                <div>
+                                    <input type="radio" id="sexo-masculino" name="sexo-mandado" value="Masculino" class="sr-only peer" checked>
+                                    <label for="sexo-masculino" class="block w-full p-3 text-center text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors">Masculino</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="sexo-feminino" name="sexo-mandado" value="Feminino" class="sr-only peer">
+                                    <label for="sexo-feminino" class="block w-full p-3 text-center text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors">Feminino</label>
+                                </div>
+                            </div>
+
+                            <!-- Coluna 2: Faixa Etária (Centro) -->
+                            <div class="lg:col-span-3 flex flex-col gap-3">
+                                <span class="text-xs font-bold text-gray-700 uppercase tracking-wider block">Faixa Etária</span>
+                                <div>
+                                    <input type="radio" id="faixa-adulto" name="faixa-mandado" value="Adulto" class="sr-only peer" checked>
+                                    <label for="faixa-adulto" class="block w-full p-3 text-center text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors">Adulto</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="faixa-adolescente" name="faixa-mandado" value="Adolescente" class="sr-only peer">
+                                    <label for="faixa-adolescente" class="block w-full p-3 text-center text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors">Adolescente</label>
+                                </div>
+                            </div>
+
+                            <!-- Coluna 3: Contadores (Direita) -->
+                            <div class="lg:col-span-6 flex flex-col gap-4 lg:pl-6 lg:border-l border-gray-300">
+                                <div>
+                                    <label class="text-xs font-bold text-gray-700 leading-tight block mb-1">Total de Mandados Cumpridos</label>
+                                    <input type="number" id="mandados-total-count" value="0" class="w-full border border-gray-300 rounded p-2 text-center bg-gray-200 font-bold text-base" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Campo Abaixo: Crime do MP -->
+                        <div class="mt-6 pt-4 border-t border-gray-200">
+                            <label for="crime-mp" class="block text-xs font-bold text-gray-700 uppercase mb-1">
+                                Crime do MP <span class="text-red-500 font-bold">* (Obrigatório)</span>
+                            </label>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <input type="text" id="crime-mp" placeholder="Digite o Crime do MP (Ex: Roubo, Homicídio, Tráfico, Pensão alimentícia...)"
+                                    class="flex-1 p-3 border border-gray-300 rounded-md shadow-sm font-medium text-sm focus:outline-none focus:ring-2 focus:ring-pm-marinho focus:border-pm-marinho">
+                                <button type="button" onclick="addMandado()" class="sm:w-48 bg-blue-600 text-white p-3 rounded-md font-bold shadow hover:bg-blue-700 transition-colors text-base tracking-wide flex items-center justify-center gap-1">
+                                    Adicionar +
+                                </button>
+                            </div>
+                            <p id="crime-mp-erro" class="text-xs text-red-600 font-bold mt-1.5 hidden">⚠️ O campo "Crime do MP" é obrigatório para adicionar o mandado.</p>
+                        </div>
+                        
+                        <ul id="lista-mandados" class="text-sm mt-5 list-none text-gray-700 font-medium space-y-2"></ul>
+                    </div>
+                </div>
 
                 <!-- Textos Livres -->
                 <div class="grid grid-cols-1 gap-4 pt-4 border-t-2 border-slate-200">
@@ -207,8 +270,20 @@
                     
                     <div class="form-group">
                         <label class="text-sm font-bold text-gray-700">Observação Geral</label>
-                        <p class="text-xs text-gray-500 mb-1">O detalhamento de veículos será inserido de forma automática e organizada após o seu texto.</p>
+                        <p class="text-xs text-gray-500 mb-1">Os detalhamentos de veículos e mandados serão inseridos de forma automática e organizada após o seu texto.</p>
                         <textarea id="obs" rows="3" class="w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-pm-petroleo focus:border-pm-petroleo"></textarea>
+                    </div>
+                </div>
+
+                <!-- Banner de Avisos e Validações -->
+                <div id="aviso-validacao" class="hidden my-4 p-4 rounded-lg bg-red-50 border-2 border-red-400 text-red-900 shadow-md">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl flex-shrink-0">⚠️</span>
+                        <div class="flex-1">
+                            <h5 class="font-extrabold text-sm uppercase text-red-800 tracking-wide mb-1">Atenção: Inconsistência nos Dados</h5>
+                            <div id="aviso-corpo" class="text-sm font-medium space-y-2 leading-relaxed"></div>
+                        </div>
+                        <button type="button" onclick="fecharAvisoValidacao()" class="text-red-400 hover:text-red-700 text-xl font-bold leading-none" title="Fechar aviso">&times;</button>
                     </div>
                 </div>
 
@@ -291,7 +366,103 @@
             atualizarListaVeiculos();
         }
 
-        function atualizarListaVeiculos() {
+                // Variável para armazenar os mandados cumpridos detalhados
+        let detalhesMandados = [];
+
+        function addMandado() {
+            const sexoRadio = document.querySelector('input[name="sexo-mandado"]:checked');
+            const faixaRadio = document.querySelector('input[name="faixa-mandado"]:checked');
+            const crimeInput = document.getElementById('crime-mp');
+            const erroEl = document.getElementById('crime-mp-erro');
+            
+            if (!sexoRadio || !faixaRadio || !crimeInput) return;
+            
+            const crimeTexto = crimeInput.value.trim();
+            if (!crimeTexto) {
+                if (erroEl) erroEl.classList.remove('hidden');
+                crimeInput.classList.add('border-red-500', 'ring-2', 'ring-red-400');
+                crimeInput.focus();
+                return;
+            }
+            
+            if (erroEl) erroEl.classList.add('hidden');
+            crimeInput.classList.remove('border-red-500', 'ring-2', 'ring-red-400');
+
+            const sexo = sexoRadio.value;
+            const faixa = faixaRadio.value;
+
+            detalhesMandados.push({
+                sexo: sexo,
+                faixa: faixa,
+                crime: crimeTexto
+            });
+
+            // Atualiza contadores
+            const total = detalhesMandados.length;
+            const inputPMandado = document.getElementById('p-mandado');
+            if (inputPMandado) inputPMandado.value = total;
+            const countBox = document.getElementById('mandados-total-count');
+            if (countBox) countBox.value = total;
+
+            // Limpa o campo de texto e restaura rádio padrão para o próximo
+            crimeInput.value = '';
+            const defSexo = document.getElementById('sexo-masculino');
+            if (defSexo) defSexo.checked = true;
+            const defFaixa = document.getElementById('faixa-adulto');
+            if (defFaixa) defFaixa.checked = true;
+
+            atualizarListaMandados();
+        }
+
+        function removerMandado(index) {
+            detalhesMandados.splice(index, 1);
+            const total = detalhesMandados.length;
+            const inputPMandado = document.getElementById('p-mandado');
+            if (inputPMandado) inputPMandado.value = total;
+            const countBox = document.getElementById('mandados-total-count');
+            if (countBox) countBox.value = total;
+            atualizarListaMandados();
+        }
+
+        function limparDetalhesMandados() {
+            detalhesMandados = [];
+            const inputPMandado = document.getElementById('p-mandado');
+            if (inputPMandado) inputPMandado.value = "0";
+            const countBox = document.getElementById('mandados-total-count');
+            if (countBox) countBox.value = "0";
+            const crimeInput = document.getElementById('crime-mp');
+            if (crimeInput) {
+                crimeInput.value = '';
+                crimeInput.classList.remove('border-red-500', 'ring-2', 'ring-red-400');
+            }
+            const erroEl = document.getElementById('crime-mp-erro');
+            if (erroEl) erroEl.classList.add('hidden');
+            const defSexo = document.getElementById('sexo-masculino');
+            if (defSexo) defSexo.checked = true;
+            const defFaixa = document.getElementById('faixa-adulto');
+            if (defFaixa) defFaixa.checked = true;
+            atualizarListaMandados();
+        }
+
+        function atualizarListaMandados() {
+            const lista = document.getElementById('lista-mandados');
+            if (!lista) return;
+            lista.innerHTML = '';
+            detalhesMandados.forEach((item, index) => {
+                let num = index + 1;
+                let numFormatado = num < 10 ? '0' + num : num;
+                lista.innerHTML += `
+                    <li class="flex items-center justify-between p-2.5 bg-white rounded-md border border-gray-200 shadow-xs">
+                        <span class="text-sm font-medium text-gray-800">
+                            - <strong>01</strong> ${item.sexo}, ${item.faixa} • <em>Crime do MP:</em> <span class="font-bold text-pm-marinho">${item.crime}</span>
+                        </span>
+                        <button type="button" onclick="removerMandado(${index})" class="text-xs text-red-600 hover:text-red-800 font-bold px-2 py-1 rounded hover:bg-red-50 transition-colors" title="Remover este mandado">Excluir ✕</button>
+                    </li>
+                `;
+            });
+        }
+
+function atualizarListaVeiculos() {
             const lista = document.getElementById('lista-veiculos');
             lista.innerHTML = '';
             for (let chave in detalhesVeiculos) {
@@ -305,17 +476,27 @@
 
         let tituloFormatado = "";
         
-        // Função utilitária nova: formata o número preenchendo com 0 (ex: 2 -> 02, 0 -> 00)
+        // Formata para o WhatsApp: se for nulo, vazio ou zerado, retorna '00'.
         function formatarDoisDigitos(val) {
+            if (val === undefined || val === null || val === '' || val === '0' || val === 0 || val === '00' || val === '--' || val === '- -') {
+                return '00';
+            }
             let num = parseInt(val, 10);
-            if (isNaN(num)) return val;
+            if (isNaN(num) || num <= 0) return '00';
             return num < 10 ? '0' + num : num.toString();
         }
         
-        // Formatar Valores base (retorna 0 interno pro envio do formulário/planilha)
+        // Formatar Valores para envio à planilha (retorna null quando vazio ou zerado)
         function formatVal(id) { 
-            const val = document.getElementById(id).value;
-            return (val === undefined || val === null || val.trim() === "") ? '0' : val;
+            const el = document.getElementById(id);
+            if (!el) return null;
+            const val = el.value;
+            if (val === undefined || val === null) return null;
+            const trimmed = val.trim();
+            if (trimmed === "" || trimmed === "0") return null;
+            const num = parseInt(trimmed, 10);
+            if (isNaN(num) || num <= 0) return null;
+            return num.toString();
         }
         
         function formatTxt(id) { return document.getElementById(id).value.trim() || 'Nada a constar'; }
@@ -339,6 +520,31 @@
         document.addEventListener('DOMContentLoaded', () => {
             setDynamicTitle();
 
+            // Remove alertas visuais nos campos ao digitar
+            ['veiculos-abordados', 'pessoas-abordadas', 'p-encam', 'p-preso', 'p-mandado'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => {
+                        el.classList.remove('border-red-500', 'bg-red-50', 'ring-2', 'ring-red-300');
+                    });
+                }
+            });
+
+            const crimeInputEl = document.getElementById('crime-mp');
+            if (crimeInputEl) {
+                crimeInputEl.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addMandado();
+                    }
+                });
+                crimeInputEl.addEventListener('input', () => {
+                    const erroEl = document.getElementById('crime-mp-erro');
+                    if (erroEl) erroEl.classList.add('hidden');
+                    crimeInputEl.classList.remove('border-red-500', 'ring-2', 'ring-red-400');
+                });
+            }
+
             const feedbackElement = document.getElementById('db-feedback');
             const previewContainer = document.getElementById('preview-container');
             const previewContent = document.getElementById('preview-content');
@@ -347,15 +553,90 @@
             document.getElementById('limpar-btn').addEventListener('click', () => {
                 document.getElementById('report-form').reset();
                 limparDetalhesVeiculos();
+                limparDetalhesMandados();
+                fecharAvisoValidacao();
                 previewContainer.classList.add('hidden');
                 document.getElementById('viaturas').value = '1';
                 document.getElementById('efetivo').value = '3';
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
+            function fecharAvisoValidacao() {
+                const avisoEl = document.getElementById('aviso-validacao');
+                if (avisoEl) avisoEl.classList.add('hidden');
+                
+                ['veiculos-abordados', 'pessoas-abordadas', 'p-encam', 'p-preso', 'p-mandado', 'crime-mp'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.remove('border-red-500', 'bg-red-50', 'ring-2', 'ring-red-300');
+                });
+            }
+
+            function validarFormulario() {
+                fecharAvisoValidacao();
+                const erros = [];
+                const camposComErro = [];
+
+                // Validação 1: OPM Obrigatória
+                const opmRadio = document.querySelector('input[name="opm"]:checked');
+                if (!opmRadio) {
+                    erros.push('<strong>OPM Obrigatória:</strong> Selecione a OPM da Guarnição antes de prosseguir.');
+                }
+
+                // Validação 2: Crime do MP preenchido mas não adicionado
+                const crimeInputCheck = document.getElementById('crime-mp');
+                if (crimeInputCheck && crimeInputCheck.value.trim() !== '') {
+                    erros.push('<strong>Crime do MP Pendente:</strong> Você digitou o crime <em>"' + crimeInputCheck.value.trim() + '"</em> no Detalhamento de Mandados, mas não clicou em <strong>Adicionar +</strong>. Adicione o mandado ou limpe o campo antes de prosseguir.');
+                    camposComErro.push(crimeInputCheck);
+                }
+
+                // Validação 3: Pessoas abordadas >= Veículos abordados
+                const inputVeicAbord = document.getElementById('veiculos-abordados');
+                const inputPessAbord = document.getElementById('pessoas-abordadas');
+                const veicAbord = parseInt(inputVeicAbord ? inputVeicAbord.value : 0, 10) || 0;
+                const pessAbord = parseInt(inputPessAbord ? inputPessAbord.value : 0, 10) || 0;
+
+                if (pessAbord < veicAbord) {
+                    erros.push('<strong>Inconsistência nas Abordagens:</strong> O número de <strong>Pessoas abordadas (' + pessAbord + ')</strong> não pode ser menor que o de <strong>Veículos abordados (' + veicAbord + ')</strong>.<br><span class="text-xs text-red-700 font-bold">Contabilize cada abordagem: para cada <u>01 Veículo abordado</u>, registre <span class="underline">pelo menos 01</span> <u>Pessoa abordada</u> (condutor).</span>');
+                    if (inputPessAbord) camposComErro.push(inputPessAbord);
+                    if (inputVeicAbord) camposComErro.push(inputVeicAbord);
+                }
+
+                // Validação 4: Encaminhados à DP >= Presos Flag/TCO + Mandados cumpridos
+                const inputPEncam = document.getElementById('p-encam');
+                const inputPPreso = document.getElementById('p-preso');
+                const inputPMandado = document.getElementById('p-mandado');
+                const pEncam = parseInt(inputPEncam ? inputPEncam.value : 0, 10) || 0;
+                const pPreso = parseInt(inputPPreso ? inputPPreso.value : 0, 10) || 0;
+                const pMandado = parseInt(inputPMandado ? inputPMandado.value : 0, 10) || 0;
+                const totalDetencoes = pPreso + pMandado;
+
+                if (pEncam < totalDetencoes) {
+                    erros.push('<strong>Inconsistência nos Encaminhamentos:</strong> O número de <strong>Encaminhados à DP (' + pEncam + ')</strong> nunca pode ser menor que a soma de <strong>Presos Flag/TCO (' + pPreso + ')</strong> + <strong>Mandados cumpridos (' + pMandado + ')</strong> = <strong>' + totalDetencoes + '</strong>.<br><span class="text-xs text-red-700 font-bold">Lembre-se: O campo "Encaminhados à DP" deve contabilizar todas as pessoas que foram conduzidas à delegacia (autores, vítimas, testemunhas, envolvidos, etc.).</span>');
+                    if (inputPEncam) camposComErro.push(inputPEncam);
+                    if (inputPPreso) camposComErro.push(inputPPreso);
+                    if (inputPMandado) camposComErro.push(inputPMandado);
+                }
+
+                if (erros.length > 0) {
+                    const avisoEl = document.getElementById('aviso-validacao');
+                    const avisoCorpo = document.getElementById('aviso-corpo');
+                    if (avisoEl && avisoCorpo) {
+                        avisoCorpo.innerHTML = '<ul class="list-disc pl-5 space-y-2">' + erros.map(e => '<li>' + e + '</li>').join('') + '</ul>';
+                        avisoEl.classList.remove('hidden');
+                        avisoEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    camposComErro.forEach(el => {
+                        el.classList.add('border-red-500', 'bg-red-50', 'ring-2', 'ring-red-300');
+                    });
+                    return false;
+                }
+
+                return true;
+            }
+
             function generateReportString() {
-                // Preenche campos vazios antes de capturar dados
-                preencherCamposVazios();
+                // Executa verificações de consistência
+                if (!validarFormulario()) return null;
                 
                 const opmRadio = document.querySelector('input[name="opm"]:checked');
                 let opm = "";
@@ -364,23 +645,10 @@
                     if (opmRadio.value === "custom") {
                         // Se a opção personalizada foi marcada, pega o texto digitado
                         opm = document.getElementById('opm-custom-input').value.trim();
-                        // Se o usuário clicou mas não digitou nada, coloca um aviso
                         if (opm === "") opm = "Equipe Não Informada"; 
                     } else {
                         opm = opmRadio.value;
                     }
-                }
-                
-                if (!opm) {
-                    feedbackElement.textContent = 'Atenção: Selecione a OPM antes de continuar.';
-                    feedbackElement.classList.remove('text-pm-marinho');
-                    feedbackElement.classList.add('text-red-600');
-                    setTimeout(() => {
-                         feedbackElement.textContent = '';
-                         feedbackElement.classList.remove('text-red-600');
-                         feedbackElement.classList.add('text-pm-marinho');
-                    }, 3000);
-                    return null;
                 }
 
                 // Compila observações + detalhamentos agregados
@@ -399,6 +667,16 @@
                     });
                     
                     obsFinal += `Detalhamento de Veículos:\n` + arrayFormatado.join("\n");
+                }
+
+                if (detalhesMandados.length > 0) {
+                    if (obsFinal !== "") obsFinal += "\n\n";
+                    
+                    let arrayMandadosFormatado = detalhesMandados.map(m => {
+                        return `- *01* ${m.sexo}, ${m.faixa} - Crime do MP: ${m.crime}`;
+                    });
+                    
+                    obsFinal += `Detalhamento de Mandados Cumpridos:\n` + arrayMandadosFormatado.join("\n");
                 }
                 
                 if (obsFinal.trim() === "") obsFinal = "Nada a constar";
@@ -497,12 +775,31 @@ Observação:
                 }
             });
 
-            document.getElementById('whatsapp-btn').addEventListener('click', async () => {
+            const whatsappBtn = document.getElementById('whatsapp-btn');
+            let bloqueioEnvio = false;
+
+            whatsappBtn.addEventListener('click', async () => {
+                if (bloqueioEnvio) return;
+
                 const result = generateReportString();
                 if (!result) return;
-                
-                feedbackElement.textContent = "Processando...";
-                
+
+                // Bloqueia cliques múltiplos imediatamente
+                bloqueioEnvio = true;
+                whatsappBtn.disabled = true;
+                const originalBtnHTML = whatsappBtn.innerHTML;
+
+                // Feedback visual de envio
+                whatsappBtn.classList.remove('bg-green-600', 'hover:bg-green-700', 'hover:-translate-y-1');
+                whatsappBtn.classList.add('bg-gray-500', 'cursor-not-allowed', 'opacity-90');
+                whatsappBtn.innerHTML = `
+                    <svg class="animate-spin h-5 w-5 text-white inline-block mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                    ⏳ Enviando os dados...`,
+                feedbackElement.textContent = "Registrando envio dos dados...";
+
                 try {
                     await fetch(GOOGLE_SCRIPT_URL, {
                         method: 'POST', mode: 'no-cors',
@@ -511,8 +808,27 @@ Observação:
                     });
                 } catch (e) { console.error(e); }
 
+                // Abre o WhatsApp com o relatório pré-formatado
                 window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(result.text)}`, '_blank');
                 feedbackElement.textContent = "";
+
+                // Contagem regressiva de bloqueio de 5 segundos
+                let contagem = 5;
+                whatsappBtn.innerHTML = `✅ Enviado! Aguarde (${contagem}s)...`;
+
+                const timerLock = setInterval(() => {
+                    contagem--;
+                    if (contagem > 0) {
+                        whatsappBtn.innerHTML = `✅ Enviado! Aguarde (${contagem}s)...`;
+                    } else {
+                        clearInterval(timerLock);
+                        bloqueioEnvio = false;
+                        whatsappBtn.disabled = false;
+                        whatsappBtn.innerHTML = originalBtnHTML;
+                        whatsappBtn.classList.remove('bg-gray-500', 'cursor-not-allowed', 'opacity-90');
+                        whatsappBtn.classList.add('bg-green-600', 'hover:bg-green-700', 'hover:-translate-y-1');
+                    }
+                }, 1000);
             });
         });
     </script>
