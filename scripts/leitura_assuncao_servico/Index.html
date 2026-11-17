@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <title>14ª CIPM – Controle de Plantão</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+
+    /* Paleta Institucional PMMS */
+    .bg-pm-marinho  { background-color: #0f172a; }
+    .text-pm-marinho { color: #0f172a; }
+    .bg-pm-petroleo { background-color: #134e4a; }
+    .text-pm-petroleo { color: #134e4a; }
+    .border-pm-petroleo { border-color: #134e4a; }
+
+    /* Tabs */
+    .tab-btn {
+      flex: 1;
+      padding: 14px 8px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #6b7280;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .tab-btn.active {
+      color: #0f172a;
+      border-bottom-color: #134e4a;
+      background-color: #f8fafc;
+    }
+    .tab-btn:hover:not(.active) {
+      color: #0f172a;
+      background-color: #f1f5f9;
+    }
+
+    /* Seção de setor (labels-categoria) */
+    .section-title {
+      @apply col-span-full bg-pm-petroleo text-white px-3 py-1 rounded text-xs font-bold uppercase tracking-wider mt-1;
+    }
+
+    /* Formulário */
+    .form-label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #374151; text-transform: uppercase; letter-spacing: 0.04em; }
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 15px;
+      background: #fff;
+      color: #0f172a;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #134e4a;
+      box-shadow: 0 0 0 3px rgba(19,78,74,0.12);
+    }
+    select.form-input { cursor: pointer; }
+
+    /* Mensagem WhatsApp preview */
+    .msg-box {
+      background: #e7ffdb;
+      border: 1px solid #a7f3d0;
+      border-radius: 10px;
+      padding: 14px;
+      white-space: pre-wrap;
+      font-size: 14px;
+      font-family: monospace;
+      line-height: 1.6;
+      color: #064e3b;
+    }
+
+    /* Status banners */
+    .banner-ok  { background: #d1fae5; border: 1px solid #6ee7b7; color: #065f46; border-radius: 8px; padding: 10px 14px; font-size: 13px; font-weight: 700; text-align: center; }
+    .banner-err { background: #fee2e2; border: 1px solid #fca5a5; color: #7f1d1d; border-radius: 8px; padding: 10px 14px; font-size: 13px; font-weight: 700; text-align: center; }
+
+    .hidden { display: none !important; }
+
+    /* Spinner */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { animation: spin 0.8s linear infinite; display: inline-block; }
+
+    /* KM hint */
+    .hint { font-size: 12px; color: #6b7280; margin-top: 4px; font-weight: 600; }
+    .hint-warn { color: #b91c1c; }
+  </style>
+</head>
+<body class="text-gray-900 p-2 sm:p-4">
+
+  <div class="max-w-xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200">
+
+    <!-- ============== CABEÇALHO ============== -->
+    <div class="bg-pm-marinho text-white p-5 text-center border-b-4 border-pm-petroleo">
+      <img src="https://raw.githubusercontent.com/14cipm-oficial/form_whats/main/Bras%C3%A3o_PMMS.PNG" alt="Brasão PMMS"
+           class="h-16 mx-auto mb-2 drop-shadow-lg object-contain"
+           onerror="this.src='Brasão_PMMS.PNG'">
+      <p class="text-xs font-bold tracking-widest text-gray-300 uppercase mb-0.5">
+        Polícia Militar de Mato Grosso do Sul – 14ª CIPM
+      </p>
+      <h1 class="text-lg md:text-xl font-extrabold text-white">CONTROLE DE SERVIÇO</h1>
+      <p class="text-xs text-gray-400 mt-0.5">Registro integrado ao Policial Padrão e WhatsApp</p>
+    </div>
+
+    <!-- ============== TABS ============== -->
+    <div class="flex bg-white border-b border-gray-200 sticky top-0 z-10">
+      <button class="tab-btn active" id="tabAssuncaoBtn" onclick="trocarAba('assuncao')">
+        🟢 Assunção de Serviço
+      </button>
+      <button class="tab-btn" id="tabEncerramentoBtn" onclick="trocarAba('encerramento')">
+        🔴 Encerramento
+      </button>
+    </div>
+
+    <!-- ============== LOADING ============== -->
+    <div id="loading" class="p-8 text-center text-gray-500 font-semibold">
+      <span class="spinner text-xl">⟳</span> Carregando efetivo da 14ª CIPM...
+    </div>
+
+    <div class="p-4 md:p-6 space-y-5">
+
+      <!-- ==========================================
+           ABA 1: ASSUNÇÃO
+      =========================================== -->
+      <div id="abaAssuncao" class="hidden space-y-4">
+
+        <!-- SEÇÃO: Data / Hora / Fração -->
+        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 shadow-sm">
+          <h3 class="text-xs font-bold text-pm-petroleo uppercase tracking-wider mb-3 border-b border-gray-300 pb-2">
+            Identificação do Serviço
+          </h3>
+
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <div>
+              <label for="data" class="form-label">Data do Serviço</label>
+              <input type="date" id="data" class="form-input" required>
+            </div>
+            <div>
+              <label for="hora" class="form-label">Hora da Assunção</label>
+              <input type="time" id="hora" class="form-input" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="fracao" class="form-label">Fração / Pelotão</label>
+            <select id="fracao" class="form-input" onchange="aoMudarFracao()" required>
+              <option value="SEDE / MUNDO NOVO">SEDE – MUNDO NOVO</option>
+              <option value="2º PEL / IGUATEMI">2º PEL – IGUATEMI</option>
+              <option value="3º PEL / JAPORÃ">3º PEL – JAPORÃ</option>
+              <option value="4º PEL / ELDORADO">4º PEL – ELDORADO</option>
+              <option value="GPM / PORTO MORUMBI">GPM – PORTO MORUMBI</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="posto" class="form-label">Posto / Equipe</label>
+              <select id="posto" class="form-input">
+                <option value="RP 01">RP 01</option>
+                <option value="RP 02">RP 02</option>
+                <option value="CFP">CFP</option>
+                <option value="Auxiliar do CFP">Auxiliar do CFP</option>
+                <option value="Rádio Operador">Rádio Operador</option>
+              </select>
+            </div>
+            <div>
+              <label for="regime" class="form-label">Regime</label>
+              <select id="regime" class="form-input">
+                <option value="24h">24h</option>
+                <option value="12h">12h</option>
+                <option value="Sobreaviso">Sobreaviso</option>
+                <option value="Extra">Extra</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEÇÃO: Viatura -->
+        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 shadow-sm">
+          <h3 class="text-xs font-bold text-pm-petroleo uppercase tracking-wider mb-3 border-b border-gray-300 pb-2">
+            Viatura
+          </h3>
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <div>
+              <label for="vtrPlaca" class="form-label">Placa</label>
+              <input type="text" id="vtrPlaca" class="form-input" placeholder="Ex: UGY-3H55">
+            </div>
+            <div>
+              <label for="vtrPrefixo" class="form-label">Prefixo</label>
+              <input type="text" id="vtrPrefixo" class="form-input" placeholder="Ex: 10.3975">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="kmInicial" class="form-label">KM Inicial</label>
+              <input type="number" id="kmInicial" class="form-input" placeholder="Ex: 8957" required>
+            </div>
+            <div>
+              <label for="materialCarga" class="form-label">Material Carga / Equipe</label>
+              <input type="text" id="materialCarga" class="form-input" value="S/A" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEÇÃO: Guarnição -->
+        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 shadow-sm">
+          <h3 class="text-xs font-bold text-pm-petroleo uppercase tracking-wider mb-3 border-b border-gray-300 pb-2">
+            Guarnição
+          </h3>
+
+          <div class="space-y-3">
+            <div>
+              <label for="cmt" class="form-label">CMT RP / Titular <span class="text-red-500">*</span></label>
+              <select id="cmt" class="form-input" required></select>
+            </div>
+            <div>
+              <label for="motorista" class="form-label">Motorista</label>
+              <select id="motorista" class="form-input"></select>
+            </div>
+            <div>
+              <label for="patrulheiro" class="form-label">Patrulheiro</label>
+              <select id="patrulheiro" class="form-input"></select>
+            </div>
+            <div>
+              <label for="despachante" class="form-label">Despachante</label>
+              <select id="despachante" class="form-input"></select>
+            </div>
+            <div>
+              <label for="telefone" class="form-label">Telefone Funcional</label>
+              <input type="text" id="telefone" class="form-input" placeholder="67 99999-9999">
+            </div>
+            <div>
+              <label for="obs" class="form-label">Observações (opcional)</label>
+              <textarea id="obs" rows="2" class="form-input" placeholder="Alterações de viatura ou material, se houver"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTÃO SUBMIT -->
+        <button type="button" id="btnSalvarAssuncao"
+          onclick="enviarAssuncao()"
+          class="w-full py-4 bg-pm-marinho text-white font-extrabold rounded-lg shadow-lg hover:bg-slate-800 transition-all text-base tracking-wide uppercase flex items-center justify-center gap-2">
+          💾 Salvar na Planilha e Gerar WhatsApp
+        </button>
+
+        <!-- RESULTADO ASSUNÇÃO -->
+        <div id="resultadoAssuncao" class="hidden space-y-3">
+          <div class="banner-ok">✅ Assunção registrada com sucesso na planilha!</div>
+          <div id="previewAssuncao" class="msg-box"></div>
+          <a id="linkWhatsAssuncao" target="_blank" rel="noopener"
+             class="w-full py-4 bg-green-600 text-white font-extrabold rounded-lg shadow-lg hover:bg-green-700 transition-all text-base tracking-wide uppercase flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+            </svg>
+            Abrir e Enviar no WhatsApp
+          </a>
+          <button type="button"
+            onclick="copiarTexto('previewAssuncao')"
+            class="w-full py-3 bg-slate-200 text-pm-marinho font-bold rounded-lg hover:bg-slate-300 transition-all text-sm uppercase tracking-wide">
+            📋 Copiar Mensagem
+          </button>
+        </div>
+
+      </div><!-- /abaAssuncao -->
+
+
+      <!-- ==========================================
+           ABA 2: ENCERRAMENTO
+      =========================================== -->
+      <div id="abaEncerramento" class="hidden space-y-4">
+
+        <!-- SEÇÃO: Turno em andamento -->
+        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 shadow-sm">
+          <h3 class="text-xs font-bold text-pm-petroleo uppercase tracking-wider mb-3 border-b border-gray-300 pb-2">
+            Turno em Andamento
+          </h3>
+          <div>
+            <label for="turnoAberto" class="form-label">Selecione o Turno</label>
+            <select id="turnoAberto" class="form-input" onchange="aoMudarTurno()" required></select>
+            <p id="infoKmInicial" class="hint mt-1"></p>
+          </div>
+        </div>
+
+        <!-- SEÇÃO: KM Final -->
+        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 shadow-sm">
+          <h3 class="text-xs font-bold text-pm-petroleo uppercase tracking-wider mb-3 border-b border-gray-300 pb-2">
+            Quilometragem Final
+          </h3>
+          <div>
+            <label for="kmFinal" class="form-label">KM Final</label>
+            <input type="number" id="kmFinal" class="form-input" oninput="calcularKmRodado()" required>
+            <p id="infoKmRodado" class="hint mt-1"></p>
+          </div>
+        </div>
+
+        <!-- SEÇÃO: Produtividade -->
+        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 shadow-sm">
+          <h3 class="text-xs font-bold text-pm-petroleo uppercase tracking-wider mb-3 border-b border-gray-300 pb-2">
+            Produtividade do Turno
+          </h3>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="abordagensPessoas" class="form-label">Abordagens Pessoas</label>
+              <div class="inline-flex w-full h-11 bg-white border border-gray-300 rounded-lg shadow-sm overflow-hidden">
+                <button type="button" onclick="ajustarContador('abordagensPessoas', -1)"
+                  class="flex-none w-11 bg-gray-100 hover:bg-gray-200 text-pm-marinho font-bold text-xl border-r border-gray-300 transition-colors focus:outline-none">−</button>
+                <input type="number" id="abordagensPessoas" value="0" min="0"
+                  class="flex-1 text-center font-black text-lg text-pm-marinho bg-white focus:outline-none" readonly>
+                <button type="button" onclick="ajustarContador('abordagensPessoas', 1)"
+                  class="flex-none w-11 bg-gray-100 hover:bg-gray-200 text-pm-marinho font-bold text-xl border-l border-gray-300 transition-colors focus:outline-none">+</button>
+              </div>
+            </div>
+
+            <div>
+              <label for="abordagensVeiculos" class="form-label">Abordagens Veículos</label>
+              <div class="inline-flex w-full h-11 bg-white border border-gray-300 rounded-lg shadow-sm overflow-hidden">
+                <button type="button" onclick="ajustarContador('abordagensVeiculos', -1)"
+                  class="flex-none w-11 bg-gray-100 hover:bg-gray-200 text-pm-marinho font-bold text-xl border-r border-gray-300 transition-colors focus:outline-none">−</button>
+                <input type="number" id="abordagensVeiculos" value="0" min="0"
+                  class="flex-1 text-center font-black text-lg text-pm-marinho bg-white focus:outline-none" readonly>
+                <button type="button" onclick="ajustarContador('abordagensVeiculos', 1)"
+                  class="flex-none w-11 bg-gray-100 hover:bg-gray-200 text-pm-marinho font-bold text-xl border-l border-gray-300 transition-colors focus:outline-none">+</button>
+              </div>
+            </div>
+
+            <div>
+              <label for="autosInfracao" class="form-label">Autos de Infração</label>
+              <div class="inline-flex w-full h-11 bg-white border border-gray-300 rounded-lg shadow-sm overflow-hidden">
+                <button type="button" onclick="ajustarContador('autosInfracao', -1)"
+                  class="flex-none w-11 bg-gray-100 hover:bg-gray-200 text-pm-marinho font-bold text-xl border-r border-gray-300 transition-colors focus:outline-none">−</button>
+                <input type="number" id="autosInfracao" value="0" min="0"
+                  class="flex-1 text-center font-black text-lg text-pm-marinho bg-white focus:outline-none" readonly>
+                <button type="button" onclick="ajustarContador('autosInfracao', 1)"
+                  class="flex-none w-11 bg-gray-100 hover:bg-gray-200 text-pm-marinho font-bold text-xl border-l border-gray-300 transition-colors focus:outline-none">+</button>
+              </div>
+            </div>
+
+            <div>
+              <label for="remocoesVeiculos" class="form-label">Remoções de Veículos</label>
+              <div class="inline-flex w-full h-11 bg-white border border-gray-300 rounded-lg shadow-sm overflow-hidden">
+                <button type="button" onclick="ajustarContador('remocoesVeiculos', -1)"
+                  class="flex-none w-11 bg-gray-100 hover:bg-gray-200 text-pm-marinho font-bold text-xl border-r border-gray-300 transition-colors focus:outline-none">−</button>
+                <input type="number" id="remocoesVeiculos" value="0" min="0"
+                  class="flex-1 text-center font-black text-lg text-pm-marinho bg-white focus:outline-none" readonly>
+                <button type="button" onclick="ajustarContador('remocoesVeiculos', 1)"
+                  class="flex-none w-11 bg-gray-100 hover:bg-gray-200 text-pm-marinho font-bold text-xl border-l border-gray-300 transition-colors focus:outline-none">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTÃO SUBMIT -->
+        <button type="button" id="btnSalvarEncerramento"
+          onclick="enviarEncerramento()"
+          class="w-full py-4 bg-red-700 text-white font-extrabold rounded-lg shadow-lg hover:bg-red-800 transition-all text-base tracking-wide uppercase flex items-center justify-center gap-2">
+          🔒 Encerrar Turno e Gerar WhatsApp
+        </button>
+
+        <!-- RESULTADO ENCERRAMENTO -->
+        <div id="resultadoEncerramento" class="hidden space-y-3">
+          <div class="banner-ok">✅ Encerramento salvo com sucesso na planilha!</div>
+          <div id="previewEncerramento" class="msg-box"></div>
+          <a id="linkWhatsEncerramento" target="_blank" rel="noopener"
+             class="w-full py-4 bg-green-600 text-white font-extrabold rounded-lg shadow-lg hover:bg-green-700 transition-all text-base tracking-wide uppercase flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+            </svg>
+            Abrir e Enviar no WhatsApp
+          </a>
+          <button type="button"
+            onclick="copiarTexto('previewEncerramento')"
+            class="w-full py-3 bg-slate-200 text-pm-marinho font-bold rounded-lg hover:bg-slate-300 transition-all text-sm uppercase tracking-wide">
+            📋 Copiar Mensagem
+          </button>
+        </div>
+
+      </div><!-- /abaEncerramento -->
+
+    </div><!-- /content wrapper -->
+
+    <div class="text-center text-xs text-gray-400 py-3 border-t border-gray-100">
+      14ª CIPM – Sistema de Controle de Plantão
+    </div>
+
+  </div><!-- /card principal -->
+
+
+  <!-- ==========================================
+       JAVASCRIPT
+  =========================================== -->
+  <script>
+
+  // ── Padrões por Fração ──────────────────────────────────────────────────
+  const PADROES_FRACAO = {
+    'SEDE / MUNDO NOVO':   { cidades: ['MUNDO NOVO'],               placa: 'REW-3B07', prefixo: '10.3184', tel: '67 99268-5540' },
+    '2º PEL / IGUATEMI':   { cidades: ['IGUATEMI'],                  placa: 'SMK-3C53', prefixo: '10.3757', tel: '67 99211-5349' },
+    '3º PEL / JAPORÃ':     { cidades: ['JAPORA'],                    placa: 'SMK-7A60', prefixo: '10.3747', tel: '67 99282-0703' },
+    '4º PEL / ELDORADO':   { cidades: ['ELDORADO', 'PORTO MORUMBI'], placa: 'UGY-3H55', prefixo: '10.3975', tel: '67 99217-3603' },
+    'GPM / PORTO MORUMBI': { cidades: ['PORTO MORUMBI', 'ELDORADO'], placa: 'UGY-3H55', prefixo: '10.3975', tel: '67 99217-3603' }
+  };
+
+  let listaEfetivo = [];
+  let listaTurnos  = [];
+
+  // ── Init ─────────────────────────────────────────────────────────────────
+  window.onload = function () {
+    const agora = new Date();
+    document.getElementById('data').value = agora.toISOString().split('T')[0];
+    document.getElementById('hora').value = agora.toTimeString().slice(0, 5);
+
+    // Chama o Apps Script para buscar efetivo e turnos abertos
+    google.script.run
+      .withSuccessHandler(inicializarDados)
+      .withFailureHandler(function (err) {
+        document.getElementById('loading').innerHTML =
+          '<span class="text-red-600 font-bold">⚠️ Erro ao carregar dados: ' + err.message + '</span>';
+      })
+      .getDadosIniciais();
+  };
+
+  function inicializarDados(res) {
+    listaEfetivo = res.efetivo      || [];
+    listaTurnos  = res.turnosAbertos || [];
+
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('abaAssuncao').classList.remove('hidden');
+
+    aoMudarFracao();
+    preencherSelectTurnos();
+  }
+
+  // ── Troca de Abas ────────────────────────────────────────────────────────
+  function trocarAba(aba) {
+    const isAss = aba === 'assuncao';
+    document.getElementById('abaAssuncao').classList.toggle('hidden', !isAss);
+    document.getElementById('abaEncerramento').classList.toggle('hidden', isAss);
+    document.getElementById('tabAssuncaoBtn').classList.toggle('active', isAss);
+    document.getElementById('tabEncerramentoBtn').classList.toggle('active', !isAss);
+  }
+
+  // ── Fração: preenche VTR e selects ──────────────────────────────────────
+  function aoMudarFracao() {
+    const fracao = document.getElementById('fracao').value;
+    const padrao = PADROES_FRACAO[fracao];
+    if (padrao) {
+      document.getElementById('vtrPlaca').value   = padrao.placa;
+      document.getElementById('vtrPrefixo').value = padrao.prefixo;
+      document.getElementById('telefone').value   = padrao.tel;
+      popularSelectsEfetivo(padrao.cidades);
+    }
+  }
+
+  function popularSelectsEfetivo(cidadesP) {
+    const ids = ['cmt', 'motorista', 'patrulheiro', 'despachante'];
+    const locais = listaEfetivo.filter(p => cidadesP.includes(p.cidade));
+    const outros = listaEfetivo.filter(p => !cidadesP.includes(p.cidade));
+
+    ids.forEach(id => {
+      const sel = document.getElementById(id);
+      const valorAtual = sel.value;
+
+      if (id === 'cmt') {
+        sel.innerHTML = '<option value="">-- Selecione o CMT / Titular --</option>';
+      } else {
+        sel.innerHTML = '<option value="">-- Opcional --</option>';
+      }
+
+      if (locais.length) {
+        const g1 = document.createElement('optgroup');
+        g1.label = '📍 Efetivo da Fração';
+        locais.forEach(p => g1.appendChild(new Option(p.nome, p.nome)));
+        sel.appendChild(g1);
+      }
+      if (outros.length) {
+        const g2 = document.createElement('optgroup');
+        g2.label = '🔄 Outros Pelotões';
+        outros.forEach(p => g2.appendChild(new Option(`${p.nome} (${p.cidade})`, p.nome)));
+        sel.appendChild(g2);
+      }
+
+      if (valorAtual) sel.value = valorAtual;
+    });
+  }
+
+  // ── Enviar Assunção ──────────────────────────────────────────────────────
+  function enviarAssuncao() {
+    const btn = document.getElementById('btnSalvarAssuncao');
+
+    // Validação básica
+    const cmt = document.getElementById('cmt').value;
+    const km  = document.getElementById('kmInicial').value;
+    if (!cmt)   { alert('Selecione o CMT / Titular antes de salvar.'); return; }
+    if (!km)    { alert('Informe o KM Inicial antes de salvar.'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner">⟳</span>&nbsp; Salvando na planilha...';
+
+    const dados = {
+      data:          document.getElementById('data').value,
+      hora:          document.getElementById('hora').value,
+      fracao:        document.getElementById('fracao').value,
+      posto:         document.getElementById('posto').value,
+      regime:        document.getElementById('regime').value,
+      vtrPlaca:      document.getElementById('vtrPlaca').value.trim(),
+      vtrPrefixo:    document.getElementById('vtrPrefixo').value.trim(),
+      kmInicial:     document.getElementById('kmInicial').value,
+      materialCarga: document.getElementById('materialCarga').value.trim(),
+      cmt:           document.getElementById('cmt').value,
+      motorista:     document.getElementById('motorista').value,
+      patrulheiro:   document.getElementById('patrulheiro').value,
+      despachante:   document.getElementById('despachante').value,
+      telefone:      document.getElementById('telefone').value.trim(),
+      obs:           document.getElementById('obs').value.trim()
+    };
+
+    google.script.run
+      .withSuccessHandler(function (res) {
+        btn.disabled = false;
+        btn.innerHTML = '💾 Salvar na Planilha e Gerar WhatsApp';
+
+        // Monta mensagem
+        let msg = `Assunção de Serviço: *${dados.fracao}*\n`;
+        msg += `Material carga e equipe: ${dados.materialCarga}\n`;
+        if (dados.vtrPlaca) {
+          msg += `Vtr ${dados.vtrPlaca.toUpperCase()} - km inicial: ${dados.kmInicial}\n`;
+        }
+        msg += `\n*CMT RP:* ${dados.cmt}`;
+        if (dados.motorista)   msg += `\n*Motorista:* ${dados.motorista}`;
+        if (dados.patrulheiro) msg += `\n*Patrulheiro:* ${dados.patrulheiro}`;
+        if (dados.despachante) msg += `\n*Despachante:* ${dados.despachante}`;
+        if (dados.obs)         msg += `\n\n*Obs:* ${dados.obs}`;
+
+        document.getElementById('previewAssuncao').textContent = msg;
+        document.getElementById('linkWhatsAssuncao').href =
+          'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
+        document.getElementById('resultadoAssuncao').classList.remove('hidden');
+        document.getElementById('resultadoAssuncao').scrollIntoView({ behavior: 'smooth' });
+
+        // Atualiza lista de turnos para o encerramento
+        google.script.run.withSuccessHandler(function (r) {
+          listaTurnos = r.turnosAbertos || [];
+          preencherSelectTurnos();
+        }).getDadosIniciais();
+      })
+      .withFailureHandler(function (err) {
+        btn.disabled = false;
+        btn.innerHTML = '💾 Salvar na Planilha e Gerar WhatsApp';
+        mostrarBannerErro('Erro ao salvar a assunção: ' + err.message);
+      })
+      .salvarAssuncao(dados);
+  }
+
+  // ── Turnos abertos (Encerramento) ────────────────────────────────────────
+  function preencherSelectTurnos() {
+    const sel = document.getElementById('turnoAberto');
+    sel.innerHTML = '';
+    if (!listaTurnos.length) {
+      sel.innerHTML = '<option value="">Nenhum turno em andamento</option>';
+      document.getElementById('infoKmInicial').textContent = '';
+      return;
+    }
+    listaTurnos.forEach(t => {
+      const texto = `${t.data} | ${t.fracao} – ${t.posto} (${t.vtr || 'Sem VTR'})`;
+      sel.appendChild(new Option(texto, t.idTurno));
+    });
+    aoMudarTurno();
+  }
+
+  function aoMudarTurno() {
+    const id    = document.getElementById('turnoAberto').value;
+    const turno = listaTurnos.find(t => t.idTurno === id);
+    const p     = document.getElementById('infoKmInicial');
+    p.textContent = turno ? `KM Inicial registrado: ${turno.kmInicial}` : '';
+    calcularKmRodado();
+  }
+
+  function calcularKmRodado() {
+    const id     = document.getElementById('turnoAberto').value;
+    const turno  = listaTurnos.find(t => t.idTurno === id);
+    const kmFinal = Number(document.getElementById('kmFinal').value);
+    const div    = document.getElementById('infoKmRodado');
+    if (turno && kmFinal > 0) {
+      const diff = kmFinal - turno.kmInicial;
+      div.textContent = diff >= 0
+        ? `✅ KM Rodado no plantão: ${diff} km`
+        : '⚠️ KM final menor que o inicial!';
+      div.className = diff >= 0 ? 'hint' : 'hint hint-warn';
+    } else {
+      div.textContent = '';
+    }
+  }
+
+  // ── Enviar Encerramento ──────────────────────────────────────────────────
+  function enviarEncerramento() {
+    const idTurno = document.getElementById('turnoAberto').value;
+    if (!idTurno) { alert('Selecione um turno em andamento.'); return; }
+
+    const kmFinal = document.getElementById('kmFinal').value;
+    if (!kmFinal) { alert('Informe o KM Final antes de encerrar.'); return; }
+
+    const turno = listaTurnos.find(t => t.idTurno === idTurno);
+    const btn   = document.getElementById('btnSalvarEncerramento');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner">⟳</span>&nbsp; Salvando encerramento...';
+
+    const dados = {
+      idTurno,
+      kmFinal,
+      abordagensPessoas: document.getElementById('abordagensPessoas').value,
+      abordagensVeiculos: document.getElementById('abordagensVeiculos').value,
+      autosInfracao: document.getElementById('autosInfracao').value,
+      remocoesVeiculos: document.getElementById('remocoesVeiculos').value
+    };
+
+    google.script.run
+      .withSuccessHandler(function (res) {
+        btn.disabled = false;
+        btn.innerHTML = '🔒 Encerrar Turno e Gerar WhatsApp';
+
+        let msg = `Passagem de Serviço: *${turno.fracao}*\n`;
+        msg += `Data: ${turno.data} | ${turno.posto}\n`;
+        if (turno.vtr) {
+          msg += `Vtr ${turno.vtr} – km final: ${dados.kmFinal} (Rodado: ${res.kmRodado} km)\n`;
+        }
+        msg += `\n*Produtividade do Turno:*\n`;
+        msg += `• Abordagens Pessoas: ${dados.abordagensPessoas}\n`;
+        msg += `• Abordagens Veículos: ${dados.abordagensVeiculos}\n`;
+        msg += `• Autos de Infração: ${dados.autosInfracao}\n`;
+        msg += `• Remoções: ${dados.remocoesVeiculos}`;
+
+        document.getElementById('previewEncerramento').textContent = msg;
+        document.getElementById('linkWhatsEncerramento').href =
+          'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
+        document.getElementById('resultadoEncerramento').classList.remove('hidden');
+        document.getElementById('resultadoEncerramento').scrollIntoView({ behavior: 'smooth' });
+
+        google.script.run.withSuccessHandler(function (r) {
+          listaTurnos = r.turnosAbertos || [];
+          preencherSelectTurnos();
+        }).getDadosIniciais();
+      })
+      .withFailureHandler(function (err) {
+        btn.disabled = false;
+        btn.innerHTML = '🔒 Encerrar Turno e Gerar WhatsApp';
+        mostrarBannerErro('Erro ao encerrar: ' + err.message);
+      })
+      .salvarEncerramento(dados);
+  }
+
+  // ── Utilitários ──────────────────────────────────────────────────────────
+  function ajustarContador(id, delta) {
+    const inp = document.getElementById(id);
+    const val = Math.max(0, (Number(inp.value) || 0) + delta);
+    inp.value = val;
+  }
+
+  function copiarTexto(idElemento) {
+    const texto = document.getElementById(idElemento).textContent;
+    navigator.clipboard.writeText(texto).then(() => {
+      alert('✅ Mensagem copiada para a área de transferência!');
+    }).catch(() => {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = texto;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert('✅ Mensagem copiada!');
+    });
+  }
+
+  function mostrarBannerErro(msg) {
+    const div = document.createElement('div');
+    div.className = 'banner-err mx-4 mb-2';
+    div.textContent = '⚠️ ' + msg;
+    document.querySelector('.space-y-5').prepend(div);
+    setTimeout(() => div.remove(), 8000);
+  }
+
+  </script>
+
+</body>
+</html>
