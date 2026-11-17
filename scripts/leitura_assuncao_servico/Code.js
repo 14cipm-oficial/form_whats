@@ -22,7 +22,13 @@ function getDadosIniciais() {
   const ss = obterPlanilha_();
   const efetivo = listarEfetivo_(ss);
   const turnosAbertos = listarTurnosAbertos_(ss);
-  return { efetivo, turnosAbertos };
+  const historico = obterHistoricoPlantao_(ss);
+  return { 
+    efetivo: efetivo, 
+    turnosAbertos: turnosAbertos,
+    kmPorVtr: historico.kmPorVtr,
+    equipesPorCmt: historico.equipesPorCmt
+  };
 }
 
 function listarEfetivo_(ss) {
@@ -75,6 +81,44 @@ function listarTurnosAbertos_(ss) {
   return abertos.reverse();
 }
 
+/**
+ * Varre o histórico de plantões para obter o último KM final de cada viatura
+ * e a última guarnição registrada com cada comandante
+ */
+function obterHistoricoPlantao_(ss) {
+  const sheet = ss.getSheetByName(ABA_PLANTAO);
+  const kmPorVtr = {};
+  const equipesPorCmt = {};
+
+  if (!sheet || sheet.getLastRow() < 2) {
+    return { kmPorVtr: kmPorVtr, equipesPorCmt: equipesPorCmt };
+  }
+
+  const dados = sheet.getDataRange().getValues();
+  // Varre de baixo para cima (do mais recente para o mais antigo)
+  for (let i = dados.length - 1; i >= 1; i--) {
+    const placa = String(dados[i][6] || '').trim().toUpperCase();
+    const kmFinal = Number(dados[i][16]) || 0;
+    const kmInicial = Number(dados[i][8]) || 0;
+    const kmReferencia = kmFinal > 0 ? kmFinal : kmInicial;
+
+    if (placa && !kmPorVtr[placa] && kmReferencia > 0) {
+      kmPorVtr[placa] = kmReferencia;
+    }
+
+    const cmt = String(dados[i][11] || '').trim();
+    if (cmt && !equipesPorCmt[cmt]) {
+      equipesPorCmt[cmt] = {
+        motorista: String(dados[i][12] || '').trim(),
+        patrulheiro: String(dados[i][13] || '').trim(),
+        despachante: String(dados[i][14] || '').trim()
+      };
+    }
+  }
+
+  return { kmPorVtr: kmPorVtr, equipesPorCmt: equipesPorCmt };
+}
+
 function salvarAssuncao(dados) {
   const ss = obterPlanilha_();
   const sheetPlantao = obterOuCriarAba_(ss, ABA_PLANTAO, [
@@ -122,7 +166,7 @@ function salvarAssuncao(dados) {
   ]);
 
   const equipe = [
-    { nome: dados.cmt, funcao: 'CMT / Titular' },
+    { nome: dados.cmt, funcao: 'Comandante' },
     { nome: dados.motorista, funcao: 'Motorista' },
     { nome: dados.patrulheiro, funcao: 'Patrulheiro' },
     { nome: dados.despachante, funcao: 'Despachante' }

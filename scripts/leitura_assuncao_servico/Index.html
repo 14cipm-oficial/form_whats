@@ -41,11 +41,6 @@
       background-color: #f1f5f9;
     }
 
-    /* Seção de setor (labels-categoria) */
-    .section-title {
-      @apply col-span-full bg-pm-petroleo text-white px-3 py-1 rounded text-xs font-bold uppercase tracking-wider mt-1;
-    }
-
     /* Formulário */
     .form-label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #374151; text-transform: uppercase; letter-spacing: 0.04em; }
     .form-input {
@@ -121,7 +116,7 @@
 
     <!-- ============== LOADING ============== -->
     <div id="loading" class="p-8 text-center text-gray-500 font-semibold">
-      <span class="spinner text-xl">⟳</span> Carregando efetivo da 14ª CIPM...
+      <span class="spinner text-xl">⟳</span> Carregando efetivo e dados da 14ª CIPM...
     </div>
 
     <div class="p-4 md:p-6 space-y-5">
@@ -144,7 +139,7 @@
             </div>
             <div>
               <label for="hora" class="form-label">Hora da Assunção</label>
-              <input type="time" id="hora" class="form-input" required>
+              <input type="time" id="hora" class="form-input" value="08:00" required>
             </div>
           </div>
 
@@ -190,7 +185,7 @@
           <div class="grid grid-cols-2 gap-3 mb-3">
             <div>
               <label for="vtrPlaca" class="form-label">Placa</label>
-              <input type="text" id="vtrPlaca" class="form-input" placeholder="Ex: UGY-3H55">
+              <input type="text" id="vtrPlaca" class="form-input" placeholder="Ex: UGY-3H55" oninput="aoDigitarPlaca()">
             </div>
             <div>
               <label for="vtrPrefixo" class="form-label">Prefixo</label>
@@ -199,8 +194,9 @@
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label for="kmInicial" class="form-label">KM Inicial</label>
-              <input type="number" id="kmInicial" class="form-input" placeholder="Ex: 8957" required>
+              <label for="kmInicial" class="form-label">KM Inicial <span class="text-red-500">*</span></label>
+              <input type="number" id="kmInicial" class="form-input font-bold" placeholder="Ex: 8957" required>
+              <p id="hintKmInicialVtr" class="text-[11px] text-emerald-700 font-bold mt-1 hidden"></p>
             </div>
             <div>
               <label for="materialCarga" class="form-label">Material Carga / Equipe</label>
@@ -216,22 +212,47 @@
           </h3>
 
           <div class="space-y-3">
-            <div>
-              <label for="cmt" class="form-label">CMT RP / Titular <span class="text-red-500">*</span></label>
-              <select id="cmt" class="form-input" required></select>
+            <!-- Comandante -->
+            <div class="relative">
+              <label for="cmt" class="form-label">COMANDANTE <span class="text-red-500">*</span></label>
+              <div class="relative">
+                <input type="text" id="cmt" class="form-input pr-8" placeholder="Digite para buscar ou selecione o Comandante..." autocomplete="off" required>
+                <button type="button" onclick="toggleDropdown('dropdown-cmt')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-xs focus:outline-none p-1">▼</button>
+              </div>
+              <div id="dropdown-cmt" class="hidden absolute left-0 right-0 z-30 mt-1 max-h-56 overflow-y-auto bg-white border border-gray-300 rounded-lg shadow-xl text-sm"></div>
+              <p id="hintEquipeCmt" class="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 rounded p-2 mt-1.5 hidden"></p>
             </div>
-            <div>
+
+            <!-- Motorista -->
+            <div class="relative">
               <label for="motorista" class="form-label">Motorista</label>
-              <select id="motorista" class="form-input"></select>
+              <div class="relative">
+                <input type="text" id="motorista" class="form-input pr-8" placeholder="Digite para buscar ou selecione o Motorista..." autocomplete="off">
+                <button type="button" onclick="toggleDropdown('dropdown-motorista')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-xs focus:outline-none p-1">▼</button>
+              </div>
+              <div id="dropdown-motorista" class="hidden absolute left-0 right-0 z-30 mt-1 max-h-56 overflow-y-auto bg-white border border-gray-300 rounded-lg shadow-xl text-sm"></div>
             </div>
-            <div>
+
+            <!-- Patrulheiro -->
+            <div class="relative">
               <label for="patrulheiro" class="form-label">Patrulheiro</label>
-              <select id="patrulheiro" class="form-input"></select>
+              <div class="relative">
+                <input type="text" id="patrulheiro" class="form-input pr-8" placeholder="Digite para buscar ou selecione o Patrulheiro..." autocomplete="off">
+                <button type="button" onclick="toggleDropdown('dropdown-patrulheiro')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-xs focus:outline-none p-1">▼</button>
+              </div>
+              <div id="dropdown-patrulheiro" class="hidden absolute left-0 right-0 z-30 mt-1 max-h-56 overflow-y-auto bg-white border border-gray-300 rounded-lg shadow-xl text-sm"></div>
             </div>
-            <div>
+
+            <!-- Despachante -->
+            <div class="relative">
               <label for="despachante" class="form-label">Despachante</label>
-              <select id="despachante" class="form-input"></select>
+              <div class="relative">
+                <input type="text" id="despachante" class="form-input pr-8" placeholder="Digite para buscar ou selecione o Despachante..." autocomplete="off">
+                <button type="button" onclick="toggleDropdown('dropdown-despachante')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-xs focus:outline-none p-1">▼</button>
+              </div>
+              <div id="dropdown-despachante" class="hidden absolute left-0 right-0 z-30 mt-1 max-h-56 overflow-y-auto bg-white border border-gray-300 rounded-lg shadow-xl text-sm"></div>
             </div>
+
             <div>
               <label for="telefone" class="form-label">Telefone Funcional</label>
               <input type="text" id="telefone" class="form-input" placeholder="67 99999-9999">
@@ -407,16 +428,19 @@
     'GPM / PORTO MORUMBI': { cidades: ['PORTO MORUMBI', 'ELDORADO'], placa: 'UGY-3H55', prefixo: '10.3975', tel: '67 99217-3603' }
   };
 
-  let listaEfetivo = [];
-  let listaTurnos  = [];
+  let listaEfetivo  = [];
+  let listaTurnos   = [];
+  let kmPorVtr      = {};
+  let equipesPorCmt = {};
 
   // ── Init ─────────────────────────────────────────────────────────────────
   window.onload = function () {
     const agora = new Date();
     document.getElementById('data').value = agora.toISOString().split('T')[0];
-    document.getElementById('hora').value = agora.toTimeString().slice(0, 5);
+    // Horário padrão da hora da assunção: 08:00
+    document.getElementById('hora').value = '08:00';
 
-    // Chama o Apps Script para buscar efetivo e turnos abertos
+    // Chama o Apps Script para buscar efetivo, turnos abertos e histórico de KM/equipes
     google.script.run
       .withSuccessHandler(inicializarDados)
       .withFailureHandler(function (err) {
@@ -427,8 +451,10 @@
   };
 
   function inicializarDados(res) {
-    listaEfetivo = res.efetivo      || [];
-    listaTurnos  = res.turnosAbertos || [];
+    listaEfetivo  = res.efetivo       || [];
+    listaTurnos   = res.turnosAbertos  || [];
+    kmPorVtr      = res.kmPorVtr       || {};
+    equipesPorCmt = res.equipesPorCmt  || {};
 
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('abaAssuncao').classList.remove('hidden');
@@ -446,7 +472,7 @@
     document.getElementById('tabEncerramentoBtn').classList.toggle('active', !isAss);
   }
 
-  // ── Fração: preenche VTR e selects ──────────────────────────────────────
+  // ── Fração: preenche VTR, KM inicial e campos de efetivo ─────────────────
   function aoMudarFracao() {
     const fracao = document.getElementById('fracao').value;
     const padrao = PADROES_FRACAO[fracao];
@@ -454,40 +480,159 @@
       document.getElementById('vtrPlaca').value   = padrao.placa;
       document.getElementById('vtrPrefixo').value = padrao.prefixo;
       document.getElementById('telefone').value   = padrao.tel;
-      popularSelectsEfetivo(padrao.cidades);
+      atualizarKmInicialPorVtr(padrao.placa);
+      configurarCamposEfetivo(padrao.cidades);
     }
   }
 
-  function popularSelectsEfetivo(cidadesP) {
-    const ids = ['cmt', 'motorista', 'patrulheiro', 'despachante'];
-    const locais = listaEfetivo.filter(p => cidadesP.includes(p.cidade));
-    const outros = listaEfetivo.filter(p => !cidadesP.includes(p.cidade));
+  function aoDigitarPlaca() {
+    const placa = document.getElementById('vtrPlaca').value;
+    atualizarKmInicialPorVtr(placa);
+  }
 
-    ids.forEach(id => {
-      const sel = document.getElementById(id);
-      const valorAtual = sel.value;
+  function atualizarKmInicialPorVtr(placa) {
+    const placaLimpa = (placa || '').trim().toUpperCase();
+    const kmSugestao = kmPorVtr[placaLimpa];
+    const inpKm = document.getElementById('kmInicial');
+    const hintKm = document.getElementById('hintKmInicialVtr');
 
-      if (id === 'cmt') {
-        sel.innerHTML = '<option value="">-- Selecione o CMT / Titular --</option>';
-      } else {
-        sel.innerHTML = '<option value="">-- Opcional --</option>';
+    if (kmSugestao && kmSugestao > 0) {
+      inpKm.value = kmSugestao;
+      if (hintKm) {
+        hintKm.textContent = `📍 Último KM final registrado na planilha (${placaLimpa}): ${kmSugestao}`;
+        hintKm.classList.remove('hidden');
+      }
+    } else {
+      if (hintKm) hintKm.classList.add('hidden');
+    }
+  }
+
+  // ── Campos de Efetivo (Busca digitada + Navegação na lista completa) ──────
+  function configurarCamposEfetivo(cidadesP) {
+    configurarBuscaCampo('cmt', 'dropdown-cmt', cidadesP, 'Selecione o Comandante', aoSelecionarComandante);
+    configurarBuscaCampo('motorista', 'dropdown-motorista', cidadesP, 'Selecione o Motorista');
+    configurarBuscaCampo('patrulheiro', 'dropdown-patrulheiro', cidadesP, 'Selecione o Patrulheiro');
+    configurarBuscaCampo('despachante', 'dropdown-despachante', cidadesP, 'Selecione o Despachante');
+  }
+
+  function configurarBuscaCampo(idInput, idDropdown, cidadesP, placeholderText, onSelectCallback) {
+    const input = document.getElementById(idInput);
+    const dropdown = document.getElementById(idDropdown);
+    if (!input || !dropdown) return;
+
+    function renderizar(filtro = '') {
+      dropdown.innerHTML = '';
+      const f = filtro.toLowerCase().trim();
+
+      const locais = listaEfetivo.filter(p => cidadesP.includes(p.cidade) && (!f || p.nome.toLowerCase().includes(f)));
+      const outros = listaEfetivo.filter(p => !cidadesP.includes(p.cidade) && (!f || p.nome.toLowerCase().includes(f)));
+
+      if (locais.length === 0 && outros.length === 0) {
+        dropdown.innerHTML = '<div class="p-3 text-xs text-gray-400 text-center">Nenhum militar encontrado</div>';
+        return;
       }
 
       if (locais.length) {
-        const g1 = document.createElement('optgroup');
-        g1.label = '📍 Efetivo da Fração';
-        locais.forEach(p => g1.appendChild(new Option(p.nome, p.nome)));
-        sel.appendChild(g1);
-      }
-      if (outros.length) {
-        const g2 = document.createElement('optgroup');
-        g2.label = '🔄 Outros Pelotões';
-        outros.forEach(p => g2.appendChild(new Option(`${p.nome} (${p.cidade})`, p.nome)));
-        sel.appendChild(g2);
+        const h1 = document.createElement('div');
+        h1.className = 'px-3 py-1.5 bg-slate-100 text-[11px] font-bold text-pm-petroleo uppercase tracking-wider sticky top-0 border-b border-slate-200';
+        h1.textContent = '📍 Efetivo da Fração';
+        dropdown.appendChild(h1);
+
+        locais.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'px-3 py-2 text-sm text-gray-800 hover:bg-slate-100 cursor-pointer border-b border-gray-50 flex justify-between items-center';
+          item.innerHTML = `<span>${p.nome}</span><span class="text-[10px] text-gray-400 font-semibold">${p.cidade}</span>`;
+          item.onmousedown = (e) => {
+            e.preventDefault();
+            input.value = p.nome;
+            dropdown.classList.add('hidden');
+            if (onSelectCallback) onSelectCallback(p.nome);
+          };
+          dropdown.appendChild(item);
+        });
       }
 
-      if (valorAtual) sel.value = valorAtual;
-    });
+      if (outros.length) {
+        const h2 = document.createElement('div');
+        h2.className = 'px-3 py-1.5 bg-slate-100 text-[11px] font-bold text-gray-600 uppercase tracking-wider sticky top-0 border-b border-slate-200';
+        h2.textContent = '🔄 Outros Pelotões';
+        dropdown.appendChild(h2);
+
+        outros.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'px-3 py-2 text-sm text-gray-800 hover:bg-slate-100 cursor-pointer border-b border-gray-50 flex justify-between items-center';
+          item.innerHTML = `<span>${p.nome}</span><span class="text-[10px] text-gray-400 font-semibold">${p.cidade}</span>`;
+          item.onmousedown = (e) => {
+            e.preventDefault();
+            input.value = p.nome;
+            dropdown.classList.add('hidden');
+            if (onSelectCallback) onSelectCallback(p.nome);
+          };
+          dropdown.appendChild(item);
+        });
+      }
+    }
+
+    input.onfocus = () => {
+      renderizar(input.value);
+      dropdown.classList.remove('hidden');
+    };
+
+    input.oninput = () => {
+      renderizar(input.value);
+      dropdown.classList.remove('hidden');
+      if (idInput === 'cmt') {
+        const achado = listaEfetivo.find(p => p.nome.toLowerCase() === input.value.trim().toLowerCase());
+        if (achado && onSelectCallback) onSelectCallback(achado.nome);
+      }
+    };
+
+    input.onblur = () => {
+      setTimeout(() => dropdown.classList.add('hidden'), 200);
+    };
+  }
+
+  function toggleDropdown(idDropdown) {
+    const dropdown = document.getElementById(idDropdown);
+    if (!dropdown) return;
+    const estaOculto = dropdown.classList.contains('hidden');
+    // Fecha outros dropdowns
+    document.querySelectorAll('[id^="dropdown-"]').forEach(d => d.classList.add('hidden'));
+    if (estaOculto) {
+      dropdown.classList.remove('hidden');
+    }
+  }
+
+  // ── Carregar última equipe do Comandante selecionado ─────────────────────
+  function aoSelecionarComandante(nomeCmt) {
+    const nomeLimpo = (nomeCmt || '').trim();
+    if (!nomeLimpo) return;
+
+    const equipeAnterior = equipesPorCmt[nomeLimpo];
+    const hint = document.getElementById('hintEquipeCmt');
+
+    if (equipeAnterior) {
+      let carregados = [];
+      if (equipeAnterior.motorista) {
+        document.getElementById('motorista').value = equipeAnterior.motorista;
+        carregados.push(`Motorista: ${equipeAnterior.motorista}`);
+      }
+      if (equipeAnterior.patrulheiro) {
+        document.getElementById('patrulheiro').value = equipeAnterior.patrulheiro;
+        carregados.push(`Patrulheiro: ${equipeAnterior.patrulheiro}`);
+      }
+      if (equipeAnterior.despachante) {
+        document.getElementById('despachante').value = equipeAnterior.despachante;
+        carregados.push(`Despachante: ${equipeAnterior.despachante}`);
+      }
+
+      if (hint && carregados.length > 0) {
+        hint.innerHTML = `👥 <strong>Última guarnição de ${nomeLimpo} preenchida automaticamente!</strong><br><span class="text-[11px] text-emerald-700">${carregados.join(' • ')}</span>`;
+        hint.classList.remove('hidden');
+      }
+    } else {
+      if (hint) hint.classList.add('hidden');
+    }
   }
 
   // ── Enviar Assunção ──────────────────────────────────────────────────────
@@ -495,10 +640,10 @@
     const btn = document.getElementById('btnSalvarAssuncao');
 
     // Validação básica
-    const cmt = document.getElementById('cmt').value;
+    const cmt = document.getElementById('cmt').value.trim();
     const km  = document.getElementById('kmInicial').value;
-    if (!cmt)   { alert('Selecione o CMT / Titular antes de salvar.'); return; }
-    if (!km)    { alert('Informe o KM Inicial antes de salvar.'); return; }
+    if (!cmt) { alert('Selecione o Comandante antes de salvar.'); return; }
+    if (!km)  { alert('Informe o KM Inicial antes de salvar.'); return; }
 
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner">⟳</span>&nbsp; Salvando na planilha...';
@@ -513,10 +658,10 @@
       vtrPrefixo:    document.getElementById('vtrPrefixo').value.trim(),
       kmInicial:     document.getElementById('kmInicial').value,
       materialCarga: document.getElementById('materialCarga').value.trim(),
-      cmt:           document.getElementById('cmt').value,
-      motorista:     document.getElementById('motorista').value,
-      patrulheiro:   document.getElementById('patrulheiro').value,
-      despachante:   document.getElementById('despachante').value,
+      cmt:           cmt,
+      motorista:     document.getElementById('motorista').value.trim(),
+      patrulheiro:   document.getElementById('patrulheiro').value.trim(),
+      despachante:   document.getElementById('despachante').value.trim(),
       telefone:      document.getElementById('telefone').value.trim(),
       obs:           document.getElementById('obs').value.trim()
     };
@@ -526,13 +671,13 @@
         btn.disabled = false;
         btn.innerHTML = '💾 Salvar na Planilha e Gerar WhatsApp';
 
-        // Monta mensagem
+        // Monta mensagem padronizada oficial
         let msg = `Assunção de Serviço: *${dados.fracao}*\n`;
         msg += `Material carga e equipe: ${dados.materialCarga}\n`;
         if (dados.vtrPlaca) {
           msg += `Vtr ${dados.vtrPlaca.toUpperCase()} - km inicial: ${dados.kmInicial}\n`;
         }
-        msg += `\n*CMT RP:* ${dados.cmt}`;
+        msg += `\n*COMANDANTE:* ${dados.cmt}`;
         if (dados.motorista)   msg += `\n*Motorista:* ${dados.motorista}`;
         if (dados.patrulheiro) msg += `\n*Patrulheiro:* ${dados.patrulheiro}`;
         if (dados.despachante) msg += `\n*Despachante:* ${dados.despachante}`;
@@ -544,9 +689,11 @@
         document.getElementById('resultadoAssuncao').classList.remove('hidden');
         document.getElementById('resultadoAssuncao').scrollIntoView({ behavior: 'smooth' });
 
-        // Atualiza lista de turnos para o encerramento
+        // Atualiza turnos e histórico
         google.script.run.withSuccessHandler(function (r) {
           listaTurnos = r.turnosAbertos || [];
+          kmPorVtr = r.kmPorVtr || kmPorVtr;
+          equipesPorCmt = r.equipesPorCmt || equipesPorCmt;
           preencherSelectTurnos();
         }).getDadosIniciais();
       })
@@ -667,7 +814,6 @@
     navigator.clipboard.writeText(texto).then(() => {
       alert('✅ Mensagem copiada para a área de transferência!');
     }).catch(() => {
-      // fallback
       const ta = document.createElement('textarea');
       ta.value = texto;
       document.body.appendChild(ta);
