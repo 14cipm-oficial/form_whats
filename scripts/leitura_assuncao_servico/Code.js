@@ -132,6 +132,18 @@ function getDadosIniciais() {
   };
 }
 
+function formatarTelefone_(tel) {
+  if (tel === null || tel === undefined || tel === '') return '';
+  let str = (typeof tel === 'number') ? tel.toFixed(0) : String(tel).trim();
+  const limpo = str.replace(/\D/g, '');
+  if (limpo.length === 11) {
+    return '(' + limpo.slice(0, 2) + ') ' + limpo.slice(2, 7) + '-' + limpo.slice(7);
+  } else if (limpo.length === 10) {
+    return '(' + limpo.slice(0, 2) + ') ' + limpo.slice(2, 6) + '-' + limpo.slice(6);
+  }
+  return str;
+}
+
 function listarEfetivo_(ss) {
   const sheet = ss.getSheetByName(ABA_EFETIVO);
   if (!sheet) return [];
@@ -142,6 +154,7 @@ function listarEfetivo_(ss) {
     const grad = String(dados[i][2] || '').trim();
     const cidade = String(dados[i][3] || '').trim().toUpperCase();
     const nomeGuerra = String(dados[i][4] || '').trim();
+    const telefone = dados[i][8];
     if (!nomeGuerra) continue;
 
     const gradCurta = grad ? grad.split(' ')[0] : '';
@@ -149,7 +162,8 @@ function listarEfetivo_(ss) {
 
     lista.push({
       nome: exibicao,
-      cidade: cidade
+      cidade: cidade,
+      telefone: formatarTelefone_(telefone)
     });
   }
 

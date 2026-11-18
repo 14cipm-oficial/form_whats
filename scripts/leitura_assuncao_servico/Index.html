@@ -164,13 +164,16 @@
                 <label for="opm-eldorado" class="block w-full p-2.5 text-center text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">Eldorado</label>
               </div>
               <div class="col-span-2">
-                <input type="radio" id="opm-morumbi" name="opm" value="Morumbi" class="sr-only peer" onchange="aoMudarFracao('Morumbi')">
-                <label for="opm-morumbi" class="block w-full p-2.5 text-center text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">Morumbi</label>
+                <input type="radio" id="opm-custom-radio" name="opm" value="custom" class="sr-only peer" onchange="aoMudarFracao('custom')">
+                <input type="text" id="opm-custom-input" placeholder="Cadastrar OPM..."
+                  onfocus="document.getElementById('opm-custom-radio').checked = true; aoMudarFracao('custom');"
+                  oninput="document.getElementById('opm-custom-radio').checked = true; aoMudarFracao('custom');"
+                  class="block w-full p-2.5 text-center text-sm font-bold border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f172a] peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:placeholder-gray-300 placeholder-gray-600 transition-colors shadow-sm">
               </div>
             </div>
           </div>
 
-          <!-- Bloco Equipe (RP 01, RP 02, Outra...) + Regime -->
+          <!-- Bloco Equipe (RP 01, RP 02, Cadastrar Equipe...) + Regime -->
           <div class="mb-1" id="secaoEquipe">
             <div class="flex items-center justify-between mb-1.5">
               <label class="form-label mb-0">Equipe <span class="text-red-500">*</span></label>
@@ -196,13 +199,13 @@
               </div>
               <div>
                 <input type="radio" id="eq-outra" name="equipe_sel" value="Outra" class="sr-only peer" onchange="aoMudarEquipeOpcao('Outra')">
-                <label for="eq-outra" class="block w-full p-2 text-center text-xs sm:text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">Outra...</label>
+                <label for="eq-outra" class="block w-full p-2 text-center text-xs sm:text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">Cadastrar Equipe...</label>
               </div>
             </div>
 
             <!-- Campo aberto para digitação de outra equipe -->
             <div id="campoEquipeOutra" class="mt-2 hidden">
-              <input type="text" id="equipeCustom" class="form-input text-xs" placeholder="Digite o nome da equipe (Ex: CFP, Patrulha Rural, Trânsito...)" onfocus="document.getElementById('eq-outra').checked = true;">
+              <input type="text" id="equipeCustom" class="form-input text-xs" placeholder="Cadastrar Equipe (Ex: CFP, Patrulha Rural, Trânsito...)" onfocus="document.getElementById('eq-outra').checked = true;">
             </div>
           </div>
         </div>
@@ -502,16 +505,16 @@
       setTimeout(function () {
         inicializarDados({
           efetivo: [
-            { nome: '1SGT LUCIANO', cidade: 'MUNDO NOVO' },
-            { nome: 'CB CASSIO', cidade: 'MUNDO NOVO' },
-            { nome: 'CB BORGES', cidade: 'MUNDO NOVO' },
-            { nome: '3SGT AIRAN', cidade: 'ELDORADO' },
-            { nome: 'SD BRUNO', cidade: 'ELDORADO' },
-            { nome: 'CB EDGAR', cidade: 'ELDORADO' },
-            { nome: 'ST ANDRE', cidade: 'JAPORA' },
-            { nome: 'SD D BRITO', cidade: 'JAPORA' },
-            { nome: '3SGT PAULO MARCOS', cidade: 'IGUATEMI' },
-            { nome: 'CB FERNANDO', cidade: 'IGUATEMI' }
+            { nome: '1SGT LUCIANO', cidade: 'MUNDO NOVO', telefone: '(67) 99268-5540' },
+            { nome: 'CB CASSIO', cidade: 'MUNDO NOVO', telefone: '(67) 99950-2181' },
+            { nome: 'CB BORGES', cidade: 'MUNDO NOVO', telefone: '(67) 99632-8188' },
+            { nome: '3SGT AIRAN', cidade: 'ELDORADO', telefone: '(67) 9219-0418' },
+            { nome: 'SD BRUNO', cidade: 'ELDORADO', telefone: '(67) 9824-8774' },
+            { nome: 'CB EDGAR', cidade: 'ELDORADO', telefone: '(44) 99828-6576' },
+            { nome: 'ST ANDRE', cidade: 'JAPORA', telefone: '(67) 99282-0703' },
+            { nome: 'SD D BRITO', cidade: 'JAPORA', telefone: '(67) 9992-1326' },
+            { nome: '3SGT PAULO MARCOS', cidade: 'IGUATEMI', telefone: '(67) 99211-5349' },
+            { nome: 'CB FERNANDO', cidade: 'IGUATEMI', telefone: '(67) 99211-5349' }
           ],
           turnosAbertos: [
             { idTurno: '20261118-SEDE-RP01-SIM', data: '18/11/2026', fracao: 'Sede', posto: 'RP 01', vtr: 'REW-3B07', kmInicial: 45200, cmt: '1SGT LUCIANO' }
@@ -551,7 +554,12 @@
   // ── OPM e Equipe ─────────────────────────────────────────────────────────
   function obterOpmSelecionada() {
     const rad = document.querySelector('input[name="opm"]:checked');
-    return rad ? rad.value : 'Sede';
+    if (!rad) return 'Sede';
+    if (rad.value === 'custom') {
+      const custom = (document.getElementById('opm-custom-input').value || '').trim();
+      return custom || 'Outra OPM';
+    }
+    return rad.value;
   }
 
   function aoMudarFracao(opmNome) {
@@ -563,6 +571,9 @@
       document.getElementById('telefone').value   = padrao.tel;
       atualizarKmInicialPorVtr(padrao.placa);
       configurarCamposEfetivo(padrao.cidades);
+    } else {
+      // Para OPM customizada ("Cadastrar OPM"), habilita o efetivo de todas as cidades
+      configurarCamposEfetivo(['MUNDO NOVO', 'IGUATEMI', 'JAPORA', 'ELDORADO', 'PORTO MORUMBI']);
     }
   }
 
@@ -608,6 +619,42 @@
     }
   }
 
+  // ── Helpers para Telefone do Policial no WhatsApp ────────────────────────
+  function obterTelefonePolicial(nomePolicial) {
+    if (!nomePolicial) return '';
+    const normalizar = (s) => (s || '')
+      .toUpperCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^A-Z0-9\s]/g, '')
+      .trim();
+
+    const alvo = normalizar(nomePolicial);
+    if (!alvo) return '';
+
+    // 1. Busca exata pelo nome completo de exibição
+    let achado = listaEfetivo.find(p => normalizar(p.nome) === alvo);
+    if (achado && achado.telefone) return achado.telefone;
+
+    // 2. Busca pelo nome de guerra contido no alvo
+    achado = listaEfetivo.find(p => {
+      const pNome = normalizar(p.nome);
+      const partes = pNome.split(/\s+/);
+      const guerra = partes[partes.length - 1];
+      return alvo === pNome || alvo.includes(pNome) || pNome.includes(alvo) || (guerra && alvo.includes(guerra));
+    });
+
+    if (achado && achado.telefone) return achado.telefone;
+    return '';
+  }
+
+  function formatarPolicialComTelefone(cargo, nome) {
+    if (!nome) return '';
+    const tel = obterTelefonePolicial(nome);
+    const sufixoTel = tel ? ` - ${tel}` : '';
+    return `\n*${cargo}:* ${nome}${sufixoTel}`;
+  }
+
   // ── Campos de Efetivo (Busca digitada + Navegação na lista completa) ──────
   function configurarCamposEfetivo(cidadesP) {
     configurarBuscaCampo('cmt', 'dropdown-cmt', cidadesP, 'Selecione o Comandante', aoSelecionarComandante);
@@ -642,7 +689,7 @@
         locais.forEach(p => {
           const item = document.createElement('div');
           item.className = 'px-3 py-2 text-sm text-gray-800 hover:bg-slate-100 cursor-pointer border-b border-gray-50 flex justify-between items-center';
-          item.innerHTML = `<span>${p.nome}</span><span class="text-[10px] text-gray-400 font-semibold">${p.cidade}</span>`;
+          item.innerHTML = `<span>${p.nome}</span><span class="text-[10px] text-gray-400 font-semibold">${p.cidade}${p.telefone ? ' • ' + p.telefone : ''}</span>`;
           item.onmousedown = (e) => {
             e.preventDefault();
             input.value = p.nome;
@@ -662,7 +709,17 @@
         outros.forEach(p => {
           const item = document.createElement('div');
           item.className = 'px-3 py-2 text-sm text-gray-800 hover:bg-slate-100 cursor-pointer border-b border-gray-50 flex justify-between items-center';
-          item.innerHTML = `<span>${p.nome}</span><span class="text-[10px] text-gray-400 font-semibold">${p.cidade}</span>`;
+          item.innerHTML = `<span>${p.nome}</span><span class="text-[10px] text-gray-400 font-semibold">${p.cidade}${p.telefone ? ' • ' + p.telefone : ''}</span>`;
+          item.onmousedown = (e) => {
+            e.preventDefault();
+            input.value = p.nome;
+            dropdown.classList.add('hidden');
+            if (onSelectCallback) onSelectCallback(p.nome);
+          };
+          dropdown.appendChild(item);
+        });
+      }
+    }
           item.onmousedown = (e) => {
             e.preventDefault();
             input.value = p.nome;
@@ -811,10 +868,10 @@
         const pref = dados.vtrPrefixo ? ` (${dados.vtrPrefixo})` : '';
         msg += `Vtr ${dados.vtrPlaca.toUpperCase()}${pref} - km inicial: ${dados.kmInicial}\n`;
       }
-      msg += `\n*COMANDANTE:* ${dados.cmt}`;
-      if (dados.motorista)   msg += `\n*Motorista:* ${dados.motorista}`;
-      if (dados.patrulheiro) msg += `\n*Patrulheiro:* ${dados.patrulheiro}`;
-      if (dados.despachante) msg += `\n*Despachante:* ${dados.despachante}`;
+      msg += formatarPolicialComTelefone('COMANDANTE', dados.cmt);
+      if (dados.motorista)   msg += formatarPolicialComTelefone('Motorista', dados.motorista);
+      if (dados.patrulheiro) msg += formatarPolicialComTelefone('Patrulheiro', dados.patrulheiro);
+      if (dados.despachante) msg += formatarPolicialComTelefone('Despachante', dados.despachante);
       if (dados.telefone)    msg += `\n*Telefone Funcional:* ${dados.telefone}`;
       if (dados.obs)         msg += `\n\n*Obs:* ${dados.obs}`;
 
@@ -869,6 +926,10 @@
       radioRp02.checked = true;
       aoMudarEquipeOpcao('RP 02');
     }
+    const campoOutra = document.getElementById('campoEquipeOutra');
+    if (campoOutra) campoOutra.classList.add('hidden');
+    const eqCustom = document.getElementById('equipeCustom');
+    if (eqCustom) eqCustom.value = '';
 
     // Limpa campos da guarnição anterior
     document.getElementById('cmt').value = '';
