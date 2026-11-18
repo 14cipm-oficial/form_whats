@@ -16,6 +16,18 @@ function doGet(e) {
     ).setTitle('Carga Histórica - 14ª CIPM');
   }
 
+  if (e && e.parameter && e.parameter.padronizar === 'sim') {
+    const res = padronizarFracoesPlanilha();
+    return HtmlService.createHtmlOutput(
+      '<div style="font-family:sans-serif;padding:30px;text-align:center;max-width:600px;margin:auto;">' +
+      '<h2 style="color:#134e4a;">✅ Padronização de Frações Concluída!</h2>' +
+      '<p style="font-size:16px;"><strong>Linhas de plantão atualizadas:</strong> ' + res.plantaoAlterados + '</p>' +
+      '<p style="font-size:16px;"><strong>Linhas de guarnição atualizadas:</strong> ' + res.guarnicaoAlterados + '</p>' +
+      '<p style="color:#666;margin-top:20px;">Todas as frações agora utilizam o padrão unificado: Sede, 2° PEL Iguatemi, 3° PEL Japorã, 4° PEL Eldorado e Morumbi.</p>' +
+      '</div>'
+    ).setTitle('Padronização de Frações - 14ª CIPM');
+  }
+
   return HtmlService.createHtmlOutputFromFile('Index')
     .setTitle('14ª CIPM - Assunção e Encerramento')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1');
@@ -26,17 +38,76 @@ function onOpen() {
     SpreadsheetApp.getUi()
       .createMenu('14ª CIPM')
       .addItem('📥 Importar Histórico WhatsApp (desde 01/10/2026)', 'executarCargaHistoricaWhatsAppMenu')
+      .addItem('🔄 Padronizar Frações (Sede, 2° PEL...)', 'padronizarFracoesMenu')
       .addToUi();
   } catch(e) {}
 }
 
-function executarCargaHistoricaWhatsAppMenu() {
-  const res = executarCargaHistoricaWhatsApp();
+function padronizarFracoesMenu() {
+  const res = padronizarFracoesPlanilha();
   SpreadsheetApp.getUi().alert(
-    'Carga Histórica Concluída com Sucesso!\n\n' +
-    'Plantões importados: ' + res.plantoesImportados + '\n' +
-    'Registros de policiais (guarnição): ' + res.registrosGuarnicao
+    'Padronização de Frações Concluída!\n\n' +
+    'Plantões atualizados: ' + res.plantaoAlterados + '\n' +
+    'Guarnições atualizadas: ' + res.guarnicaoAlterados + '\n\n' +
+    'Padrão: Sede, 2° PEL Iguatemi, 3° PEL Japorã, 4° PEL Eldorado, Morumbi.'
   );
+}
+
+function padronizarFracoesPlanilha() {
+  const ss = obterPlanilha_();
+  const mapa = {
+    'SEDE / MUNDO NOVO': 'Sede',
+    'SEDE – MUNDO NOVO': 'Sede',
+    'SEDE - MUNDO NOVO': 'Sede',
+    'SEDE': 'Sede',
+    '2º PEL / IGUATEMI': '2° PEL Iguatemi',
+    '2º PEL – IGUATEMI': '2° PEL Iguatemi',
+    '2º PEL - IGUATEMI': '2° PEL Iguatemi',
+    '2° PEL / IGUATEMI': '2° PEL Iguatemi',
+    '3º PEL / JAPORÃ': '3° PEL Japorã',
+    '3º PEL – JAPORÃ': '3° PEL Japorã',
+    '3º PEL - JAPORÃ': '3° PEL Japorã',
+    '3° PEL / JAPORÃ': '3° PEL Japorã',
+    '4º PEL / ELDORADO': '4° PEL Eldorado',
+    '4º PEL – ELDORADO': '4° PEL Eldorado',
+    '4º PEL - ELDORADO': '4° PEL Eldorado',
+    '4° PEL / ELDORADO': '4° PEL Eldorado',
+    'GPM / PORTO MORUMBI': 'Morumbi',
+    'GPM – PORTO MORUMBI': 'Morumbi',
+    'PORTO MORUMBI': 'Morumbi'
+  };
+
+  const sheetP = ss.getSheetByName(ABA_PLANTAO);
+  let alteradosP = 0;
+  if (sheetP && sheetP.getLastRow() > 1) {
+    const rangeP = sheetP.getRange(2, 4, sheetP.getLastRow() - 1, 1);
+    const valoresP = rangeP.getValues();
+    for (let i = 0; i < valoresP.length; i++) {
+      const v = String(valoresP[i][0] || '').trim();
+      if (mapa[v]) {
+        valoresP[i][0] = mapa[v];
+        alteradosP++;
+      }
+    }
+    if (alteradosP > 0) rangeP.setValues(valoresP);
+  }
+
+  const sheetG = ss.getSheetByName(ABA_GUARNICAO);
+  let alteradosG = 0;
+  if (sheetG && sheetG.getLastRow() > 1) {
+    const rangeG = sheetG.getRange(2, 3, sheetG.getLastRow() - 1, 1);
+    const valoresG = rangeG.getValues();
+    for (let i = 0; i < valoresG.length; i++) {
+      const v = String(valoresG[i][0] || '').trim();
+      if (mapa[v]) {
+        valoresG[i][0] = mapa[v];
+        alteradosG++;
+      }
+    }
+    if (alteradosG > 0) rangeG.setValues(valoresG);
+  }
+
+  return { sucesso: true, plantaoAlterados: alteradosP, guarnicaoAlterados: alteradosG };
 }
 
 /**

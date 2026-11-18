@@ -84,9 +84,12 @@ flowchart TD
 
 ---
 
-### 📊 Planilha 4: `Registro de Ocorrências Diárias (Formulário Raiz)`
-* **Finalidade:** Recebe o histórico bruto de envios de produtividade submetidos pelo formulário de ocorrências da página inicial.
-* **Script Vinculado:** Script 3 (`AKfycbzH1s1BBWHp_PtuUwNKNS2Ys3dwS5-h2o6hrFqWPYeoZjGL-tx_w-4bLgEUV2lx04pr`)
+### 📊 Planilha 4: `Registro de Ocorrências Diárias / Resumo Diário`
+* **Finalidade:** Recebe o histórico bruto de ocorrências e dados de produtividade submetidos pelas guarnições via formulário principal (`index.html`).
+* **ID da Planilha:** `1T0z9UyqshC7IfayLyATPeHVCjjnlugUQQI721V2SvaA`
+* **Link de Acesso:** [Abrir Planilha Resumo Diário](https://docs.google.com/spreadsheets/d/1T0z9UyqshC7IfayLyATPeHVCjjnlugUQQI721V2SvaA/edit?gid=0#gid=0)
+* **Script Receptor:** Script 3 (`AKfycbzH1s1BBWHp_PtuUwNKNS2Ys3dwS5-h2o6hrFqWPYeoZjGL-tx_w-4bLgEUV2lx04pr`)
+* **Nomenclatura Padrão de OPM/Fração:** `Sede`, `2° PEL Iguatemi`, `3° PEL Japorã`, `4° PEL Eldorado`, `Morumbi`.
 
 ---
 
@@ -124,15 +127,15 @@ O ecossistema implementa **Single Sign-On (SSO)** entre todas as páginas sob o 
 
 ## 5. Padrões Operacionais das Frações (14ª CIPM)
 
-Configurados internamente nos formulários para agilizar o preenchimento automático das viaturas e telefones de serviço:
+Configurados internamente nos formulários para agilizar o preenchimento automático das viaturas e telefones de serviço (padronizados com o Resumo Diário):
 
-| Fração / Pelotão | Municípios / Localidades | Viatura Padrão (Placa) | Prefixo | Telefone Funcional |
+| Fração / OPM Padronizada | Municípios / Localidades | Viatura Padrão (Placa) | Prefixo | Telefone Funcional |
 |---|---|---|---|---|
-| **SEDE / MUNDO NOVO** | Mundo Novo | `REW-3B07` | `10.3184` | (67) 99268-5540 |
-| **2º PEL / IGUATEMI** | Iguatemi | `SMK-3C53` | `10.3757` | (67) 99211-5349 |
-| **3º PEL / JAPORÃ** | Japorã | `SMK-7A60` | `10.3747` | (67) 99282-0703 |
-| **4º PEL / ELDORADO** | Eldorado, Porto Morumbi | `UGY-3H55` | `10.3975` | (67) 99217-3603 |
-| **GPM / PORTO MORUMBI**| Porto Morumbi, Eldorado | `UGY-3H55` | `10.3975` | (67) 99217-3603 |
+| **Sede** | Mundo Novo | `REW-3B07` | `10.3184` | (67) 99268-5540 |
+| **2° PEL Iguatemi** | Iguatemi | `SMK-3C53` | `10.3757` | (67) 99211-5349 |
+| **3° PEL Japorã** | Japorã | `SMK-7A60` | `10.3747` | (67) 99282-0703 |
+| **4° PEL Eldorado** | Eldorado, Porto Morumbi | `UGY-3H55` | `10.3975` | (67) 99217-3603 |
+| **Morumbi** | Porto Morumbi, Eldorado | `UGY-3H55` | `10.3975` | (67) 99217-3603 |
 
 ---
 

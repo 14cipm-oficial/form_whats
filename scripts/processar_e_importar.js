@@ -62,6 +62,28 @@ const cabecalhoGuarnicao = [
   'ID_Turno', 'Data_Servico', 'Fracao', 'VTR_Placa', 'Policial', 'Funcao', 'Pontua_Equipe_VTR'
 ];
 
+const MAPA_FRACAO = {
+  'SEDE / MUNDO NOVO': 'Sede',
+  'SEDE – MUNDO NOVO': 'Sede',
+  'SEDE - MUNDO NOVO': 'Sede',
+  'SEDE': 'Sede',
+  '2º PEL / IGUATEMI': '2° PEL Iguatemi',
+  '2º PEL – IGUATEMI': '2° PEL Iguatemi',
+  '2º PEL - IGUATEMI': '2° PEL Iguatemi',
+  '2° PEL / IGUATEMI': '2° PEL Iguatemi',
+  '3º PEL / JAPORÃ': '3° PEL Japorã',
+  '3º PEL – JAPORÃ': '3° PEL Japorã',
+  '3º PEL - JAPORÃ': '3° PEL Japorã',
+  '3° PEL / JAPORÃ': '3° PEL Japorã',
+  '4º PEL / ELDORADO': '4° PEL Eldorado',
+  '4º PEL – ELDORADO': '4° PEL Eldorado',
+  '4º PEL - ELDORADO': '4° PEL Eldorado',
+  '4° PEL / ELDORADO': '4° PEL Eldorado',
+  'GPM / PORTO MORUMBI': 'Morumbi',
+  'GPM – PORTO MORUMBI': 'Morumbi',
+  'PORTO MORUMBI': 'Morumbi'
+};
+
 function escapeCsv(val) {
   if (val === undefined || val === null) return '';
   const s = String(val);
@@ -80,16 +102,18 @@ dadosHistorico.forEach(rec => {
   const patrNorm = normalizarNome(rec.patrulheiro);
   const despNorm = normalizarNome(rec.despachante);
 
+  const fracaoPadronizada = MAPA_FRACAO[rec.fracao] || rec.fracao;
+
   const partesData = rec.data.split('/');
   const dataLimpa = partesData[2] + partesData[1] + partesData[0];
-  const siglaFracao = rec.fracao.split('/')[0].replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  const siglaFracao = fracaoPadronizada.split('/')[0].replace(/[^A-Za-z0-9]/g, '').toUpperCase();
   const idTurno = `${dataLimpa}-${siglaFracao}-RP01-WHATSAPP`;
 
   const linhaP = [
     idTurno,
     rec.data,
     rec.hora || '08:00',
-    rec.fracao,
+    fracaoPadronizada,
     rec.posto || 'RP 01',
     rec.regime || '24h',
     rec.vtrPlaca || '',
@@ -120,7 +144,7 @@ dadosHistorico.forEach(rec => {
       const linhaG = [
         idTurno,
         rec.data,
-        rec.fracao,
+        fracaoPadronizada,
         rec.vtrPlaca || '',
         m.nome.trim(),
         m.funcao,

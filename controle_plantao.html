@@ -146,11 +146,11 @@
           <div class="mb-3">
             <label for="fracao" class="form-label">Fração / Pelotão</label>
             <select id="fracao" class="form-input" onchange="aoMudarFracao()" required>
-              <option value="SEDE / MUNDO NOVO">SEDE – MUNDO NOVO</option>
-              <option value="2º PEL / IGUATEMI">2º PEL – IGUATEMI</option>
-              <option value="3º PEL / JAPORÃ">3º PEL – JAPORÃ</option>
-              <option value="4º PEL / ELDORADO">4º PEL – ELDORADO</option>
-              <option value="GPM / PORTO MORUMBI">GPM – PORTO MORUMBI</option>
+              <option value="Sede">Sede</option>
+              <option value="2° PEL Iguatemi">2° PEL Iguatemi</option>
+              <option value="3° PEL Japorã">3° PEL Japorã</option>
+              <option value="4° PEL Eldorado">4° PEL Eldorado</option>
+              <option value="Morumbi">Morumbi</option>
             </select>
           </div>
 
@@ -421,11 +421,11 @@
 
   // ── Padrões por Fração ──────────────────────────────────────────────────
   const PADROES_FRACAO = {
-    'SEDE / MUNDO NOVO':   { cidades: ['MUNDO NOVO'],               placa: 'REW-3B07', prefixo: '10.3184', tel: '67 99268-5540' },
-    '2º PEL / IGUATEMI':   { cidades: ['IGUATEMI'],                  placa: 'SMK-3C53', prefixo: '10.3757', tel: '67 99211-5349' },
-    '3º PEL / JAPORÃ':     { cidades: ['JAPORA'],                    placa: 'SMK-7A60', prefixo: '10.3747', tel: '67 99282-0703' },
-    '4º PEL / ELDORADO':   { cidades: ['ELDORADO', 'PORTO MORUMBI'], placa: 'UGY-3H55', prefixo: '10.3975', tel: '67 99217-3603' },
-    'GPM / PORTO MORUMBI': { cidades: ['PORTO MORUMBI', 'ELDORADO'], placa: 'UGY-3H55', prefixo: '10.3975', tel: '67 99217-3603' }
+    'Sede':             { cidades: ['MUNDO NOVO'],               placa: 'REW-3B07', prefixo: '10.3184', tel: '67 99268-5540' },
+    '2° PEL Iguatemi':   { cidades: ['IGUATEMI'],                  placa: 'SMK-3C53', prefixo: '10.3757', tel: '67 99211-5349' },
+    '3° PEL Japorã':     { cidades: ['JAPORA'],                    placa: 'SMK-7A60', prefixo: '10.3747', tel: '67 99282-0703' },
+    '4° PEL Eldorado':   { cidades: ['ELDORADO', 'PORTO MORUMBI'], placa: 'UGY-3H55', prefixo: '10.3975', tel: '67 99217-3603' },
+    'Morumbi':           { cidades: ['PORTO MORUMBI', 'ELDORADO'], placa: 'UGY-3H55', prefixo: '10.3975', tel: '67 99217-3603' }
   };
 
   let listaEfetivo  = [];
