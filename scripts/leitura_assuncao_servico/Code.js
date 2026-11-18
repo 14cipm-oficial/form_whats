@@ -3,10 +3,40 @@ const ABA_EFETIVO = 'todo_efetivo';
 const ABA_PLANTAO = 'Registro_Plantao';
 const ABA_GUARNICAO = 'Guarnicao_Policial';
 
-function doGet() {
+function doGet(e) {
+  if (e && e.parameter && e.parameter.executarCarga === 'sim') {
+    const res = executarCargaHistoricaWhatsApp();
+    return HtmlService.createHtmlOutput(
+      '<div style="font-family:sans-serif;padding:30px;text-align:center;max-width:600px;margin:auto;">' +
+      '<h2 style="color:#134e4a;">✅ Carga Histórica da 14ª CIPM Concluída com Sucesso!</h2>' +
+      '<p style="font-size:16px;"><strong>Plantões importados:</strong> ' + res.plantoesImportados + '</p>' +
+      '<p style="font-size:16px;"><strong>Registros de guarnição policial:</strong> ' + res.registrosGuarnicao + '</p>' +
+      '<p style="color:#666;margin-top:20px;">Todos os registros dos últimos 44 dias foram inseridos nas abas <code>Registro_Plantao</code> e <code>Guarnicao_Policial</code> da planilha oficial.</p>' +
+      '</div>'
+    ).setTitle('Carga Histórica - 14ª CIPM');
+  }
+
   return HtmlService.createHtmlOutputFromFile('Index')
     .setTitle('14ª CIPM - Assunção e Encerramento')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1');
+}
+
+function onOpen() {
+  try {
+    SpreadsheetApp.getUi()
+      .createMenu('14ª CIPM')
+      .addItem('📥 Importar Histórico WhatsApp (40 dias)', 'executarCargaHistoricaWhatsAppMenu')
+      .addToUi();
+  } catch(e) {}
+}
+
+function executarCargaHistoricaWhatsAppMenu() {
+  const res = executarCargaHistoricaWhatsApp();
+  SpreadsheetApp.getUi().alert(
+    'Carga Histórica Concluída com Sucesso!\n\n' +
+    'Plantões importados: ' + res.plantoesImportados + '\n' +
+    'Registros de policiais (guarnição): ' + res.registrosGuarnicao
+  );
 }
 
 /**
