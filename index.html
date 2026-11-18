@@ -6,7 +6,6 @@
     <title>Resumo de Serviço - PMMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="operacoes.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
         /* Remove setinhas dos inputs numéricos para uma interface mais limpa */
@@ -28,84 +27,13 @@
     <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200">
         <!-- Cabeçalho Oficial -->
         <div class="bg-pm-marinho text-white p-6 text-center border-b-4 border-pm-petroleo relative">
-            <div id="authUserInfo" class="hidden sm:absolute sm:top-3 sm:right-3 text-xs bg-black/40 text-gray-200 px-3 py-1 rounded-full flex items-center justify-center gap-2 mb-2 sm:mb-0"></div>
             <img src="Brasão_PMMS.PNG" alt="Brasão PMMS" class="h-24 mx-auto mb-3 drop-shadow-lg object-contain" onerror="this.style.display='none'">
             <h2 class="text-xs font-bold tracking-widest text-gray-300 uppercase mb-1">Polícia Militar de Mato Grosso do Sul - 14ª CIPM</h2>
             <h1 id="titulo-relatorio" class="text-xl md:text-2xl font-extrabold text-white">Carregando título...</h1>
             <p id="display-operacoes" class="mt-3 text-sm font-semibold text-yellow-400 bg-black bg-opacity-30 inline-block px-4 py-1 rounded-full"></p>
-
-            <!-- Atalhos Institucionais de Navegação -->
-            <div class="mt-4 flex flex-wrap gap-2 justify-center">
-                <a href="https://script.google.com/macros/s/AKfycbxrsLCvIjjtNhvok4eSDc01lUkwmsWHzv-lM9mElwbo3xbUWQNu08yPbUJGSnO07jE/exec" 
-                   target="_blank" rel="noopener"
-                   class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs md:text-sm px-4 py-2 rounded-lg shadow transition transform hover:-translate-y-0.5">
-                   <span>📋</span> Assunção e Encerramento (Plantão)
-                </a>
-                <a href="eventos/" 
-                   class="inline-flex items-center gap-1.5 bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs md:text-sm px-4 py-2 rounded-lg shadow transition transform hover:-translate-y-0.5">
-                   <span>📅</span> Escala e Eventos (SS)
-                </a>
-            </div>
         </div>
 
-        <!-- Bloco de Autenticação / Restrição de Acesso -->
-        <div id="authSection" class="p-8 text-center hidden">
-            <div class="max-w-md mx-auto bg-slate-50 border border-slate-200 rounded-xl p-6 shadow-md">
-                <div class="text-4xl mb-3" id="authIcon">🔒</div>
-                <h2 class="text-lg font-bold text-pm-marinho uppercase tracking-wide mb-2" id="authTitle">Acesso Restrito ao Efetivo</h2>
-                <p class="text-sm text-gray-600 mb-4" id="authDesc">
-                    Para preencher e enviar o Resumo de Serviço, autentique-se com sua conta Google cadastrada no grupo da 14ª CIPM.
-                </p>
-
-                <!-- Box de Erro / Não Autorizado -->
-                <div id="authErrorBox" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 text-xs rounded-lg text-left leading-relaxed"></div>
-
-                <!-- Botão Oficial Google -->
-                <div class="flex justify-center mb-3" id="googleBtnWrapper">
-                    <div id="g_id_onload"
-                         data-client_id="81878847414-f2lt8p7fbkjkh46julqdgfuhfcvau22o.apps.googleusercontent.com"
-                         data-callback="handleCredentialResponse"
-                         data-auto_select="true"
-                         data-auto_prompt="false">
-                    </div>
-                    <div class="g_id_signin"
-                         data-type="standard"
-                         data-size="large"
-                         data-theme="outline"
-                         data-text="sign_in_with"
-                         data-shape="rectangular"
-                         data-logo_alignment="left">
-                    </div>
-                </div>
-
-                <button id="btnTrocarConta" type="button" class="hidden px-4 py-2 bg-slate-200 hover:bg-slate-300 text-gray-800 text-xs font-bold rounded-lg transition" onclick="fazerLogout()">
-                    🔄 Tentar com outra conta Google
-                </button>
-
-                <p class="text-[11px] text-gray-500 mt-4 border-t border-gray-200 pt-3">
-                    🛡️ Acesso restrito a integrantes cadastrados no grupo <strong>14cipm-geral@googlegroups.com</strong> ou na lista de autorizados da 14ª CIPM.
-                </p>
-            </div>
-        </div>
-
-        <!-- Conteúdo Principal Protegido -->
-        <div id="mainContentSection">
-            <script>
-                // Mantém tela visível instantaneamente em dispositivos já autorizados
-                (function() {
-                    try {
-                        var email = localStorage.getItem('pmms_user_email');
-                        var aut = localStorage.getItem('pmms_dispositivo_autorizado');
-                        if (!email || aut !== 'true') {
-                            var sec = document.getElementById('mainContentSection');
-                            if (sec) sec.style.display = 'none';
-                            var auth = document.getElementById('authSection');
-                            if (auth) auth.classList.remove('hidden');
-                        }
-                    } catch(e) {}
-                })();
-            </script>
-            <div class="p-6 md:p-8">
+        <div class="p-6 md:p-8">
             <form id="report-form" class="space-y-6">
                 
                 <!-- Seção 1: OPM, Viaturas e Efetivo -->
@@ -384,182 +312,9 @@
                 <pre id="preview-content" class="whitespace-pre-wrap w-full text-sm font-mono bg-white p-5 rounded border border-gray-300 overflow-x-auto text-gray-800"></pre>
             </div>
         </div>
-        </div><!-- /mainContentSection -->
     </div>
 
     <script>
-        // ================= CONTROLE DE ACESSO GOOGLE (14ª CIPM) =================
-        const CLIENT_ID_GOOGLE = "81878847414-f2lt8p7fbkjkh46julqdgfuhfcvau22o.apps.googleusercontent.com";
-        const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbwHoaSSDn417xzEBtawLg_wTjC3saLZ4KFSCKlIdM-M8ZDldH3S_Rnx8PL-VxqEbzvv/exec";
-
-        function parseJwt(token) {
-            try {
-                const base64Url = token.split(".")[1];
-                const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-                const jsonPayload = decodeURIComponent(atob(base64).split("").map(function(c) {
-                    return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(""));
-                return JSON.parse(jsonPayload);
-            } catch (e) {
-                return null;
-            }
-        }
-
-        function isTokenValido(token) {
-            if (!token) return false;
-            const payload = parseJwt(token);
-            if (!payload || !payload.exp) return false;
-            return (payload.exp * 1000) > (Date.now() + 60000);
-        }
-
-        function handleCredentialResponse(response) {
-            if (!response || !response.credential) return;
-            const payload = parseJwt(response.credential);
-            if (!payload || !payload.email) {
-                mostrarErroAuth("Não foi possível identificar a conta Google. Tente novamente.");
-                return;
-            }
-
-            const email = payload.email.toLowerCase();
-            const nome = payload.name || payload.email;
-            verificarAutorizacaoServidor(email, response.credential, nome);
-        }
-
-        function verificarAutorizacaoServidor(email, token, nome) {
-            const errBox = document.getElementById("authErrorBox");
-            if (errBox) {
-                errBox.classList.remove("hidden");
-                errBox.className = "mb-4 p-3 bg-blue-50 border border-blue-200 text-blue-900 text-xs rounded-lg text-center font-bold";
-                errBox.innerHTML = "⏳ Validando credenciais junto à 14ª CIPM...";
-            }
-
-            let urlFetch = SCRIPT_API_URL + "?email=" + encodeURIComponent(email);
-            if (token && isTokenValido(token)) {
-                urlFetch += "&token=" + encodeURIComponent(token);
-            }
-            urlFetch += "&_t=" + Date.now();
-
-            fetch(urlFetch)
-                .then(res => res.json())
-                .then(resposta => {
-                    if (resposta && resposta.naoAutorizado) {
-                        mostrarTelaNaoAutorizado(email);
-                        return;
-                    }
-                    if (resposta && resposta.erro && !resposta.ocorrencias) {
-                        mostrarErroAuth(resposta.erro);
-                        return;
-                    }
-
-                    // Sucesso: Autorizado pelo grupo ou planilha
-                    localStorage.setItem("pmms_id_token", token || "");
-                    localStorage.setItem("pmms_user_email", email);
-                    localStorage.setItem("pmms_user_name", nome || email);
-                    localStorage.setItem("pmms_dispositivo_autorizado", "true");
-                    localStorage.setItem("pmms_ultimo_login", Date.now().toString());
-
-                    liberarAcesso(nome || email, email);
-                })
-                .catch(err => {
-                    console.error("Erro na comunicação com autenticação:", err);
-                    if (localStorage.getItem("pmms_dispositivo_autorizado") === "true") {
-                        liberarAcesso(localStorage.getItem("pmms_user_name") || email, email);
-                    } else {
-                        mostrarErroAuth("Falha ao comunicar com o servidor de validação. Verifique sua conexão e tente novamente.");
-                    }
-                });
-        }
-
-        function liberarAcesso(nome, email) {
-            const authSec = document.getElementById("authSection");
-            const mainSec = document.getElementById("mainContentSection");
-            if (authSec) authSec.classList.add("hidden");
-            if (mainSec) mainSec.style.display = "block";
-            atualizarBadgeUsuario(nome, email);
-        }
-
-        function atualizarBadgeUsuario(nome, email) {
-            const bar = document.getElementById("authUserInfo");
-            if (!bar) return;
-            bar.innerHTML = `<span>👤 ${nome}</span><button type="button" class="underline hover:text-red-300 ml-1.5 font-bold cursor-pointer" onclick="fazerLogout()">Sair</button>`;
-            bar.classList.remove("hidden");
-        }
-
-        function mostrarTelaLogin() {
-            const authSec = document.getElementById("authSection");
-            const mainSec = document.getElementById("mainContentSection");
-            if (authSec) authSec.classList.remove("hidden");
-            if (mainSec) mainSec.style.display = "none";
-
-            const bar = document.getElementById("authUserInfo");
-            if (bar) bar.classList.add("hidden");
-
-            document.getElementById("authIcon").innerText = "🔒";
-            document.getElementById("authTitle").innerText = "Acesso Restrito ao Efetivo";
-            document.getElementById("authDesc").innerText = "Para preencher e enviar o Resumo de Serviço, autentique-se com sua conta Google cadastrada no grupo da 14ª CIPM.";
-
-            const errBox = document.getElementById("authErrorBox");
-            if (errBox) {
-                errBox.classList.add("hidden");
-                errBox.className = "hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 text-xs rounded-lg text-left leading-relaxed";
-            }
-            document.getElementById("googleBtnWrapper").classList.remove("hidden");
-            document.getElementById("btnTrocarConta").classList.add("hidden");
-        }
-
-        function mostrarTelaNaoAutorizado(email) {
-            const authSec = document.getElementById("authSection");
-            const mainSec = document.getElementById("mainContentSection");
-            if (authSec) authSec.classList.remove("hidden");
-            if (mainSec) mainSec.style.display = "none";
-
-            document.getElementById("authIcon").innerText = "🚫";
-            document.getElementById("authTitle").innerText = "Acesso Não Autorizado";
-            document.getElementById("authDesc").innerText = "Identificamos sua conta Google, porém ela não possui permissão de acesso ao sistema da 14ª CIPM.";
-
-            const errBox = document.getElementById("authErrorBox");
-            if (errBox) {
-                errBox.className = "mb-4 p-3 bg-red-100 border border-red-300 text-red-800 text-xs rounded-lg text-left leading-relaxed";
-                errBox.innerHTML = `<strong>Conta:</strong> ${email}<br><strong>Motivo:</strong> Este e-mail não consta no grupo <em>14cipm-geral@googlegroups.com</em> nem na lista de autorizados da 14ª CIPM.<br><span class="text-red-700 font-bold block mt-1.5">Caso faça parte do efetivo, solicite sua inclusão ao comando ou P3 da 14ª CIPM.</span>`;
-                errBox.classList.remove("hidden");
-            }
-
-            document.getElementById("googleBtnWrapper").classList.add("hidden");
-            document.getElementById("btnTrocarConta").classList.remove("hidden");
-        }
-
-        function mostrarErroAuth(mensagem) {
-            const errBox = document.getElementById("authErrorBox");
-            if (errBox) {
-                errBox.className = "mb-4 p-3 bg-red-100 border border-red-300 text-red-800 text-xs rounded-lg text-left leading-relaxed";
-                errBox.innerText = mensagem;
-                errBox.classList.remove("hidden");
-            }
-        }
-
-        function fazerLogout() {
-            localStorage.removeItem("pmms_id_token");
-            localStorage.removeItem("pmms_user_email");
-            localStorage.removeItem("pmms_user_name");
-            localStorage.removeItem("pmms_dispositivo_autorizado");
-            localStorage.removeItem("pmms_ultimo_login");
-            if (window.google && google.accounts && google.accounts.id) {
-                google.accounts.id.disableAutoSelect();
-            }
-            location.reload();
-        }
-
-        function inicializarAutenticacao() {
-            const email = localStorage.getItem("pmms_user_email");
-            const autorizado = localStorage.getItem("pmms_dispositivo_autorizado") === "true";
-            const nome = localStorage.getItem("pmms_user_name") || email;
-
-            if (email && autorizado) {
-                liberarAcesso(nome, email);
-            } else {
-                mostrarTelaLogin();
-            }
-        }
         // Carrega operação vigente do arquivo externo
         document.getElementById('display-operacoes').textContent = typeof OPERACOES_VIGENTES !== 'undefined' ? `Operações vigentes: ${OPERACOES_VIGENTES}` : "Operações vigentes: 0";
 
@@ -763,7 +518,6 @@ function atualizarListaVeiculos() {
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            inicializarAutenticacao();
             setDynamicTitle();
 
             // Remove alertas visuais nos campos ao digitar
