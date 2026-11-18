@@ -155,8 +155,8 @@ dadosHistorico.forEach(rec => {
   });
 });
 
-fs.writeFileSync('Registro_Plantao.csv', linhasPlantao.join('\n'), 'utf8');
-fs.writeFileSync('Guarnicao_Policial.csv', linhasGuarnicao.join('\n'), 'utf8');
+fs.writeFileSync('Registro_Plantao.csv', '\ufeff' + linhasPlantao.join('\n'), 'utf8');
+fs.writeFileSync('Guarnicao_Policial.csv', '\ufeff' + linhasGuarnicao.join('\n'), 'utf8');
 
 console.log(`Gerado Registro_Plantao.csv com ${linhasPlantao.length - 1} registros.`);
 console.log(`Gerado Guarnicao_Policial.csv com ${linhasGuarnicao.length - 1} registros.`);
