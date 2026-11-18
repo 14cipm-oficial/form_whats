@@ -1,4 +1,4 @@
-const ID_PLANILHA_CONTROLE = '189VFhZSpn9VpruRjrNOFXtn8JbZ8wIkdWmkLxaL16Q0';
+const ID_PLANILHA_CONTROLE = '18kLtJLfhy7jijao-VTz1t0lpkpYq00YyuPE_7yVefmA';
 const ABA_EFETIVO = 'todo_efetivo';
 const ABA_PLANTAO = 'Registro_Plantao';
 const ABA_GUARNICAO = 'Guarnicao_Policial';
@@ -11,7 +11,7 @@ function doGet(e) {
       '<h2 style="color:#134e4a;">✅ Carga Histórica da 14ª CIPM Concluída com Sucesso!</h2>' +
       '<p style="font-size:16px;"><strong>Plantões importados:</strong> ' + res.plantoesImportados + '</p>' +
       '<p style="font-size:16px;"><strong>Registros de guarnição policial:</strong> ' + res.registrosGuarnicao + '</p>' +
-      '<p style="color:#666;margin-top:20px;">Todos os registros dos últimos 44 dias foram inseridos nas abas <code>Registro_Plantao</code> e <code>Guarnicao_Policial</code> da planilha oficial.</p>' +
+      '<p style="color:#666;margin-top:20px;">Todos os registros desde 01/10/2026 foram inseridos nas abas <code>Registro_Plantao</code> e <code>Guarnicao_Policial</code> da planilha oficial.</p>' +
       '</div>'
     ).setTitle('Carga Histórica - 14ª CIPM');
   }
@@ -25,7 +25,7 @@ function onOpen() {
   try {
     SpreadsheetApp.getUi()
       .createMenu('14ª CIPM')
-      .addItem('📥 Importar Histórico WhatsApp (40 dias)', 'executarCargaHistoricaWhatsAppMenu')
+      .addItem('📥 Importar Histórico WhatsApp (desde 01/10/2026)', 'executarCargaHistoricaWhatsAppMenu')
       .addToUi();
   } catch(e) {}
 }

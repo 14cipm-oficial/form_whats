@@ -54,28 +54,23 @@ flowchart TD
 ## 2. Inventário de Planilhas Google (Google Sheets)
 
 ### 📊 Planilha 1: `Controle Pessoal P3`
-* **Finalidade:** Base oficial de efetivo da unidade e repositório central dos registros de plantão (assunção e encerramento).
+* **Finalidade:** Base oficial de recursos humanos e cadastro funcional do efetivo da unidade (dados pessoais e administrativos).
 * **ID da Planilha:** `189VFhZSpn9VpruRjrNOFXtn8JbZ8wIkdWmkLxaL16Q0`
 * **Link de Acesso:** [Abrir Planilha Controle Pessoal P3](https://docs.google.com/spreadsheets/d/189VFhZSpn9VpruRjrNOFXtn8JbZ8wIkdWmkLxaL16Q0/edit?gid=0#gid=0)
-* **Abas e Estrutura:**
-  1. **`todo_efetivo`** *(Fonte de Dados)*:
-     * Coluna C (índice 2): Graduação (ex: "SD PM", "CB PM", "3º SGT PM").
-     * Coluna D (índice 3): Cidade/Fração (ex: "MUNDO NOVO", "IGUATEMI", "JAPORA", "ELDORADO", "PORTO MORUMBI").
-     * Coluna E (índice 4): Nome de Guerra (ex: "Valdecir", "Matheus", "Edgar").
-     * *Utilização:* Popula dinamicamente os selects do formulário, priorizando os policiais da fração selecionada.
-  2. **`Registro_Plantao`** *(1 linha por turno/viatura - criada automaticamente pelo script)*:
-     * Colunas: `ID_Turno`, `Data_Servico`, `Hora_Assuncao`, `Fracao`, `Posto_Equipe`, `Regime`, `VTR_Placa`, `VTR_Prefixo`, `KM_Inicial`, `Material_Carga`, `Obs_Assuncao`, `CMT_ou_Titular`, `Motorista`, `Patrulheiro`, `Despachante`, `Telefone_Funcional`, `KM_Final`, `KM_Rodado`, `Abordagens_Pessoas`, `Abordagens_Veiculos`, `Autos_Infracao`, `Remocoes_Veiculos`, `Status_Turno`, `Carimbo_Registro`.
-  3. **`Guarnicao_Policial`** *(Tabela-ponte vertical - 1 linha por militar por turno)*:
-     * Colunas: `ID_Turno`, `Data_Servico`, `Fracao`, `VTR_Placa`, `Policial`, `Funcao`, `Pontua_Equipe_VTR`.
-     * *Regra:* `Despachante` pontua com a equipe (`Sim`). Funções `CFP`, `Auxiliar do CFP` e `Rádio Operador` recebem `Não`.
+* **Abas:**
+  1. **`todo_efetivo`** *(Fonte Primária de Dados)*: Matrícula, Graduação, Lotação, Nome de Guerra, Nome Completo, CPF.
+  2. **`efetivo_mundonovo`**, **`VENCIDOS`**: Controles internos do P3.
 
 ---
 
 ### 📊 Planilha 2: `Equipe de Serviço e Policial Padrão`
-* **Finalidade:** Motor de cálculo e ranqueamento do programa "Policial Padrão".
-* **ID da Planilha:** `1ERlXegXT0UBJwHVptL-lsc-C1JXk5VpqL3RmDRdBNu8`
-* **Link de Acesso:** [Abrir Planilha Equipe de Serviço e Policial Padrão](https://docs.google.com/spreadsheets/d/1ERlXegXT0UBJwHVptL-lsc-C1JXk5VpqL3RmDRdBNu8/edit?gid=1839771915#gid=1839771915)
-* **Funcionamento:** Cruza os registros da aba `Guarnicao_Policial` com os dados de produtividade (abordagens, AITs, apreensões) gerados pelas guarnições para consolidar os pontos de cada policial sem necessidade de conferência manual de escalas.
+* **Finalidade:** Repositório operacional de serviço da unidade, controle de viaturas, histórico de plantões e motor de cálculo do programa "Policial Padrão".
+* **ID da Planilha:** `18kLtJLfhy7jijao-VTz1t0lpkpYq00YyuPE_7yVefmA`
+* **Link de Acesso:** [Abrir Planilha Equipe de Serviço e Policial Padrão](https://docs.google.com/spreadsheets/d/18kLtJLfhy7jijao-VTz1t0lpkpYq00YyuPE_7yVefmA/edit?gid=0#gid=0)
+* **Abas e Estrutura:**
+  1. **`todo_efetivo`**: Cópia/espelho do efetivo da unidade para alimentar os formulários operacionais.
+  2. **`Registro_Plantao`**: 1 linha por turno/viatura (ID_Turno, Data, Hora, Fração, Posto, Placa, Prefixo, KM, Equipe, Produtividade).
+  3. **`Guarnicao_Policial`**: Tabela-ponte vertical (1 linha por policial por turno com flag `Pontua_Equipe_VTR`). Cruza os registros com os dados de produtividade para consolidar os pontos de cada policial.
 
 ---
 
