@@ -234,37 +234,83 @@ function salvarAssuncao(dados) {
     'ID_Turno', 'Data_Servico', 'Fracao', 'VTR_Placa', 'Policial', 'Funcao', 'Pontua_Equipe_VTR'
   ]);
 
-  const dataLimpa = dados.data.replace(/-/g, '');
-  const siglaFracao = dados.fracao.split('/')[0].replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-  const siglaPosto = dados.posto.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-  const sufixo = Utilities.formatDate(new Date(), 'America/Campo_Grande', 'HHmmss');
-  const idTurno = `${dataLimpa}-${siglaFracao}-${siglaPosto}-${sufixo}`;
-
   const partesData = dados.data.split('-');
   const dataBr = `${partesData[2]}/${partesData[1]}/${partesData[0]}`;
   const carimbo = Utilities.formatDate(new Date(), 'America/Campo_Grande', 'dd/MM/yyyy HH:mm:ss');
 
-  sheetPlantao.appendRow([
-    idTurno,
-    dataBr,
-    dados.hora,
-    dados.fracao,
-    dados.posto,
-    dados.regime,
-    (dados.vtrPlaca || '').toUpperCase(),
-    dados.vtrPrefixo || '',
-    Number(dados.kmInicial) || 0,
-    dados.materialCarga || 'S/A',
-    dados.obs || '',
-    dados.cmt || '',
-    dados.motorista || '',
-    dados.patrulheiro || '',
-    dados.despachante || '',
-    dados.telefone || '',
-    '', '', '', '', '', '',
-    'Em andamento',
-    carimbo
-  ]);
+  let idTurno = dados.idTurnoAtualizar;
+  let linhaPlantaoAlvo = -1;
+
+  if (idTurno && sheetPlantao.getLastRow() > 1) {
+    const valoresPlantao = sheetPlantao.getDataRange().getValues();
+    for (let i = 1; i < valoresPlantao.length; i++) {
+      if (String(valoresPlantao[i][0]) === String(idTurno)) {
+        linhaPlantaoAlvo = i + 1;
+        break;
+      }
+    }
+  }
+
+  if (linhaPlantaoAlvo > -1) {
+    // ATUALIZAÇÃO DA LINHA EXISTENTE NA PLANILHA
+    sheetPlantao.getRange(linhaPlantaoAlvo, 2, 1, 15).setValues([[
+      dataBr,
+      dados.hora,
+      dados.fracao,
+      dados.posto,
+      dados.regime,
+      (dados.vtrPlaca || '').toUpperCase(),
+      dados.vtrPrefixo || '',
+      Number(dados.kmInicial) || 0,
+      dados.materialCarga || 'S/A',
+      dados.obs || '',
+      dados.cmt || '',
+      dados.motorista || '',
+      dados.patrulheiro || '',
+      dados.despachante || '',
+      dados.telefone || ''
+    ]]);
+    sheetPlantao.getRange(linhaPlantaoAlvo, 24).setValue(carimbo + ' (Atualizado)');
+
+    // Remove registros antigos desta guarnição para reinserir atualizados
+    if (sheetGuarnicao.getLastRow() > 1) {
+      const valoresG = sheetGuarnicao.getDataRange().getValues();
+      for (let i = valoresG.length - 1; i >= 1; i--) {
+        if (String(valoresG[i][0]) === String(idTurno)) {
+          sheetGuarnicao.deleteRow(i + 1);
+        }
+      }
+    }
+  } else {
+    // NOVO REGISTRO
+    const dataLimpa = dados.data.replace(/-/g, '');
+    const siglaFracao = dados.fracao.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    const siglaPosto = dados.posto.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    const sufixo = Utilities.formatDate(new Date(), 'America/Campo_Grande', 'HHmmss');
+    idTurno = `${dataLimpa}-${siglaFracao}-${siglaPosto}-${sufixo}`;
+
+    sheetPlantao.appendRow([
+      idTurno,
+      dataBr,
+      dados.hora,
+      dados.fracao,
+      dados.posto,
+      dados.regime,
+      (dados.vtrPlaca || '').toUpperCase(),
+      dados.vtrPrefixo || '',
+      Number(dados.kmInicial) || 0,
+      dados.materialCarga || 'S/A',
+      dados.obs || '',
+      dados.cmt || '',
+      dados.motorista || '',
+      dados.patrulheiro || '',
+      dados.despachante || '',
+      dados.telefone || '',
+      '', '', '', '', '', '',
+      'Em andamento',
+      carimbo
+    ]);
+  }
 
   const equipe = [
     { nome: dados.cmt, funcao: 'Comandante' },
@@ -297,7 +343,7 @@ function salvarAssuncao(dados) {
       .setValues(linhasGuarnicao);
   }
 
-  return { sucesso: true, idTurno: idTurno, dataBr: dataBr };
+  return { sucesso: true, idTurno: idTurno, dataBr: dataBr, atualizado: (linhaPlantaoAlvo > -1) };
 }
 
 function salvarEncerramento(dados) {

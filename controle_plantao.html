@@ -143,36 +143,66 @@
             </div>
           </div>
 
+          <!-- Bloco OPM como botões, idêntico ao index.html -->
           <div class="mb-3">
-            <label for="fracao" class="form-label">Fração / Pelotão</label>
-            <select id="fracao" class="form-input" onchange="aoMudarFracao()" required>
-              <option value="Sede">Sede</option>
-              <option value="2° PEL Iguatemi">2° PEL Iguatemi</option>
-              <option value="3° PEL Japorã">3° PEL Japorã</option>
-              <option value="4° PEL Eldorado">4° PEL Eldorado</option>
-              <option value="Morumbi">Morumbi</option>
-            </select>
+            <label class="form-label">OPM <span class="text-red-500">*</span></label>
+            <div id="opm-radio-group" class="grid grid-cols-2 gap-2 mt-1">
+              <div>
+                <input type="radio" id="opm-sede" name="opm" value="Sede" class="sr-only peer" checked onchange="aoMudarFracao('Sede')">
+                <label for="opm-sede" class="block w-full p-2.5 text-center text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">Sede</label>
+              </div>
+              <div>
+                <input type="radio" id="opm-iguatemi" name="opm" value="2° PEL Iguatemi" class="sr-only peer" onchange="aoMudarFracao('2° PEL Iguatemi')">
+                <label for="opm-iguatemi" class="block w-full p-2.5 text-center text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">Iguatemi</label>
+              </div>
+              <div>
+                <input type="radio" id="opm-japora" name="opm" value="3° PEL Japorã" class="sr-only peer" onchange="aoMudarFracao('3° PEL Japorã')">
+                <label for="opm-japora" class="block w-full p-2.5 text-center text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">Japorã</label>
+              </div>
+              <div>
+                <input type="radio" id="opm-eldorado" name="opm" value="4° PEL Eldorado" class="sr-only peer" onchange="aoMudarFracao('4° PEL Eldorado')">
+                <label for="opm-eldorado" class="block w-full p-2.5 text-center text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">Eldorado</label>
+              </div>
+              <div class="col-span-2">
+                <input type="radio" id="opm-morumbi" name="opm" value="Morumbi" class="sr-only peer" onchange="aoMudarFracao('Morumbi')">
+                <label for="opm-morumbi" class="block w-full p-2.5 text-center text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">Morumbi</label>
+              </div>
+            </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label for="posto" class="form-label">Posto / Equipe</label>
-              <select id="posto" class="form-input">
-                <option value="RP 01">RP 01</option>
-                <option value="RP 02">RP 02</option>
-                <option value="CFP">CFP</option>
-                <option value="Auxiliar do CFP">Auxiliar do CFP</option>
-                <option value="Rádio Operador">Rádio Operador</option>
-              </select>
+          <!-- Bloco Equipe (RP 01, RP 02, Outra...) + Regime -->
+          <div class="mb-1" id="secaoEquipe">
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="form-label mb-0">Equipe <span class="text-red-500">*</span></label>
+              <div class="flex items-center gap-1.5">
+                <label for="regime" class="text-xs font-bold text-gray-600">Regime:</label>
+                <select id="regime" class="py-1 px-2 border border-gray-300 rounded text-xs font-bold bg-white text-pm-marinho focus:outline-none shadow-sm">
+                  <option value="24h">24h</option>
+                  <option value="12h">12h</option>
+                  <option value="Sobreaviso">Sobreaviso</option>
+                  <option value="Extra">Extra</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <label for="regime" class="form-label">Regime</label>
-              <select id="regime" class="form-input">
-                <option value="24h">24h</option>
-                <option value="12h">12h</option>
-                <option value="Sobreaviso">Sobreaviso</option>
-                <option value="Extra">Extra</option>
-              </select>
+
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <input type="radio" id="eq-rp01" name="equipe_sel" value="RP 01" class="sr-only peer" checked onchange="aoMudarEquipeOpcao('RP 01')">
+                <label for="eq-rp01" class="block w-full p-2 text-center text-xs sm:text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">RP 01</label>
+              </div>
+              <div>
+                <input type="radio" id="eq-rp02" name="equipe_sel" value="RP 02" class="sr-only peer" onchange="aoMudarEquipeOpcao('RP 02')">
+                <label for="eq-rp02" class="block w-full p-2 text-center text-xs sm:text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">RP 02</label>
+              </div>
+              <div>
+                <input type="radio" id="eq-outra" name="equipe_sel" value="Outra" class="sr-only peer" onchange="aoMudarEquipeOpcao('Outra')">
+                <label for="eq-outra" class="block w-full p-2 text-center text-xs sm:text-sm font-bold border border-gray-300 rounded-md cursor-pointer peer-checked:bg-[#0f172a] peer-checked:text-white peer-checked:border-[#0f172a] hover:bg-gray-200 transition-colors shadow-sm">Outra...</label>
+              </div>
+            </div>
+
+            <!-- Campo aberto para digitação de outra equipe -->
+            <div id="campoEquipeOutra" class="mt-2 hidden">
+              <input type="text" id="equipeCustom" class="form-input text-xs" placeholder="Digite o nome da equipe (Ex: CFP, Patrulha Rural, Trânsito...)" onfocus="document.getElementById('eq-outra').checked = true;">
             </div>
           </div>
         </div>
@@ -264,29 +294,46 @@
           </div>
         </div>
 
-        <!-- BOTÃO SUBMIT -->
+        <!-- BOTÃO INICIAL: Salvar -->
         <button type="button" id="btnSalvarAssuncao"
           onclick="enviarAssuncao()"
           class="w-full py-4 bg-pm-marinho text-white font-extrabold rounded-lg shadow-lg hover:bg-slate-800 transition-all text-base tracking-wide uppercase flex items-center justify-center gap-2">
-          💾 Salvar na Planilha e Gerar WhatsApp
+          💾 Salvar
         </button>
 
-        <!-- RESULTADO ASSUNÇÃO -->
+        <!-- CONTAINER APÓS SALVAR: TRANSFORMAÇÃO EM 4 BOTÕES -->
         <div id="resultadoAssuncao" class="hidden space-y-3">
-          <div class="banner-ok">✅ Assunção registrada com sucesso na planilha!</div>
-          <div id="previewAssuncao" class="msg-box"></div>
+          <div id="bannerStatusAssuncao" class="banner-ok">✅ Equipe salva com sucesso na planilha!</div>
+
+          <!-- BOTÃO 1: Adicionar equipe na mesma OPM -->
+          <button type="button" id="btnNovaEquipeMesmaOpm" onclick="adicionarEquipeMesmaOpm()"
+            class="w-full py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-extrabold rounded-lg shadow-md transition-all text-sm uppercase tracking-wide flex items-center justify-center gap-2">
+            ➕ Adicionar Equipe na Mesma OPM
+          </button>
+
+          <!-- BOTÃO 2: ATUALIZAR (editar a equipe que acabou de salvar) -->
+          <button type="button" id="btnAtualizarEquipe" onclick="atualizarEquipeAtual()"
+            class="w-full py-3.5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold rounded-lg shadow-md transition-all text-sm uppercase tracking-wide flex items-center justify-center gap-2">
+            🔄 ATUALIZAR
+          </button>
+
+          <!-- BOTÃO 3: Abrir e Enviar no WhatsApp -->
           <a id="linkWhatsAssuncao" target="_blank" rel="noopener"
-             class="w-full py-4 bg-green-600 text-white font-extrabold rounded-lg shadow-lg hover:bg-green-700 transition-all text-base tracking-wide uppercase flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+             class="w-full py-3.5 bg-green-600 text-white font-extrabold rounded-lg shadow-md hover:bg-green-700 transition-all text-sm uppercase tracking-wide flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
               <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
             </svg>
-            Abrir e Enviar no WhatsApp
+            📲 Abrir e Enviar no WhatsApp
           </a>
+
+          <!-- BOTÃO 4: Copiar Mensagem -->
           <button type="button"
             onclick="copiarTexto('previewAssuncao')"
-            class="w-full py-3 bg-slate-200 text-pm-marinho font-bold rounded-lg hover:bg-slate-300 transition-all text-sm uppercase tracking-wide">
+            class="w-full py-3 bg-slate-200 text-pm-marinho font-bold rounded-lg hover:bg-slate-300 transition-all text-sm uppercase tracking-wide flex items-center justify-center gap-2">
             📋 Copiar Mensagem
           </button>
+
+          <div id="previewAssuncao" class="msg-box mt-2"></div>
         </div>
 
       </div><!-- /abaAssuncao -->
@@ -432,6 +479,7 @@
   let listaTurnos   = [];
   let kmPorVtr      = {};
   let equipesPorCmt = {};
+  let ultimoIdTurnoSalvo = null;
 
   // ── Init ─────────────────────────────────────────────────────────────────
   window.onload = function () {
@@ -440,14 +488,42 @@
     // Horário padrão da hora da assunção: 08:00
     document.getElementById('hora').value = '08:00';
 
-    // Chama o Apps Script para buscar efetivo, turnos abertos e histórico de KM/equipes
-    google.script.run
-      .withSuccessHandler(inicializarDados)
-      .withFailureHandler(function (err) {
-        document.getElementById('loading').innerHTML =
-          '<span class="text-red-600 font-bold">⚠️ Erro ao carregar dados: ' + err.message + '</span>';
-      })
-      .getDadosIniciais();
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      // Execução no ambiente Google Apps Script
+      google.script.run
+        .withSuccessHandler(inicializarDados)
+        .withFailureHandler(function (err) {
+          document.getElementById('loading').innerHTML =
+            '<span class="text-red-600 font-bold">⚠️ Erro ao carregar dados: ' + err.message + '</span>';
+        })
+        .getDadosIniciais();
+    } else {
+      // Mock local para testes no navegador em http://localhost:8000
+      setTimeout(function () {
+        inicializarDados({
+          efetivo: [
+            { nome: '1SGT LUCIANO', cidade: 'MUNDO NOVO' },
+            { nome: 'CB CASSIO', cidade: 'MUNDO NOVO' },
+            { nome: 'CB BORGES', cidade: 'MUNDO NOVO' },
+            { nome: '3SGT AIRAN', cidade: 'ELDORADO' },
+            { nome: 'SD BRUNO', cidade: 'ELDORADO' },
+            { nome: 'CB EDGAR', cidade: 'ELDORADO' },
+            { nome: 'ST ANDRE', cidade: 'JAPORA' },
+            { nome: 'SD D BRITO', cidade: 'JAPORA' },
+            { nome: '3SGT PAULO MARCOS', cidade: 'IGUATEMI' },
+            { nome: 'CB FERNANDO', cidade: 'IGUATEMI' }
+          ],
+          turnosAbertos: [
+            { idTurno: '20261118-SEDE-RP01-SIM', data: '18/11/2026', fracao: 'Sede', posto: 'RP 01', vtr: 'REW-3B07', kmInicial: 45200, cmt: '1SGT LUCIANO' }
+          ],
+          kmPorVtr: { 'REW-3B07': 45200, 'SMK-3C53': 38100, 'SMK-7A60': 61200, 'UGY-3H55': 29400 },
+          equipesPorCmt: {
+            '1SGT LUCIANO': { motorista: 'CB CASSIO', patrulheiro: '', despachante: 'CB BORGES' },
+            '3SGT AIRAN':   { motorista: 'SD BRUNO',  patrulheiro: '', despachante: 'CB EDGAR' }
+          }
+        });
+      }, 150);
+    }
   };
 
   function inicializarDados(res) {
@@ -472,16 +548,41 @@
     document.getElementById('tabEncerramentoBtn').classList.toggle('active', !isAss);
   }
 
-  // ── Fração: preenche VTR, KM inicial e campos de efetivo ─────────────────
-  function aoMudarFracao() {
-    const fracao = document.getElementById('fracao').value;
-    const padrao = PADROES_FRACAO[fracao];
+  // ── OPM e Equipe ─────────────────────────────────────────────────────────
+  function obterOpmSelecionada() {
+    const rad = document.querySelector('input[name="opm"]:checked');
+    return rad ? rad.value : 'Sede';
+  }
+
+  function aoMudarFracao(opmNome) {
+    const opm = opmNome || obterOpmSelecionada();
+    const padrao = PADROES_FRACAO[opm];
     if (padrao) {
       document.getElementById('vtrPlaca').value   = padrao.placa;
       document.getElementById('vtrPrefixo').value = padrao.prefixo;
       document.getElementById('telefone').value   = padrao.tel;
       atualizarKmInicialPorVtr(padrao.placa);
       configurarCamposEfetivo(padrao.cidades);
+    }
+  }
+
+  function obterEquipeSelecionada() {
+    const rad = document.querySelector('input[name="equipe_sel"]:checked');
+    if (!rad) return 'RP 01';
+    if (rad.value === 'Outra') {
+      const custom = (document.getElementById('equipeCustom').value || '').trim();
+      return custom || 'Outra Equipe';
+    }
+    return rad.value;
+  }
+
+  function aoMudarEquipeOpcao(val) {
+    const campo = document.getElementById('campoEquipeOutra');
+    if (val === 'Outra') {
+      campo.classList.remove('hidden');
+      document.getElementById('equipeCustom').focus();
+    } else {
+      campo.classList.add('hidden');
     }
   }
 
@@ -636,8 +737,9 @@
   }
 
   // ── Enviar Assunção ──────────────────────────────────────────────────────
-  function enviarAssuncao() {
+  function enviarAssuncao(idTurnoAtualizar) {
     const btn = document.getElementById('btnSalvarAssuncao');
+    const btnAtualizar = document.getElementById('btnAtualizarEquipe');
 
     // Validação básica
     const cmt = document.getElementById('cmt').value.trim();
@@ -645,14 +747,28 @@
     if (!cmt) { alert('Selecione o Comandante antes de salvar.'); return; }
     if (!km)  { alert('Informe o KM Inicial antes de salvar.'); return; }
 
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner">⟳</span>&nbsp; Salvando na planilha...';
+    const isAtualizacao = Boolean(idTurnoAtualizar);
+    if (isAtualizacao) {
+      if (btnAtualizar) {
+        btnAtualizar.disabled = true;
+        btnAtualizar.innerHTML = '<span class="spinner">⟳</span>&nbsp; Atualizando na planilha...';
+      }
+    } else {
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner">⟳</span>&nbsp; Salvando na planilha...';
+      }
+    }
+
+    const opm = obterOpmSelecionada();
+    const equipe = obterEquipeSelecionada();
 
     const dados = {
+      idTurnoAtualizar: idTurnoAtualizar || null,
       data:          document.getElementById('data').value,
       hora:          document.getElementById('hora').value,
-      fracao:        document.getElementById('fracao').value,
-      posto:         document.getElementById('posto').value,
+      fracao:        opm,
+      posto:         equipe,
       regime:        document.getElementById('regime').value,
       vtrPlaca:      document.getElementById('vtrPlaca').value.trim(),
       vtrPrefixo:    document.getElementById('vtrPrefixo').value.trim(),
@@ -666,43 +782,134 @@
       obs:           document.getElementById('obs').value.trim()
     };
 
-    google.script.run
-      .withSuccessHandler(function (res) {
+    function processarSucesso(res) {
+      ultimoIdTurnoSalvo = res.idTurno || idTurnoAtualizar || ('LOCAL-' + Date.now());
+
+      if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '💾 Salvar na Planilha e Gerar WhatsApp';
+        btn.innerHTML = '💾 Salvar';
+        btn.classList.add('hidden'); // O botão salvar se transforma nos 4 botões
+      }
+      if (btnAtualizar) {
+        btnAtualizar.disabled = false;
+        btnAtualizar.innerHTML = '🔄 ATUALIZAR';
+      }
 
-        // Monta mensagem padronizada oficial
-        let msg = `Assunção de Serviço: *${dados.fracao}*\n`;
-        msg += `Material carga e equipe: ${dados.materialCarga}\n`;
-        if (dados.vtrPlaca) {
-          msg += `Vtr ${dados.vtrPlaca.toUpperCase()} - km inicial: ${dados.kmInicial}\n`;
-        }
-        msg += `\n*COMANDANTE:* ${dados.cmt}`;
-        if (dados.motorista)   msg += `\n*Motorista:* ${dados.motorista}`;
-        if (dados.patrulheiro) msg += `\n*Patrulheiro:* ${dados.patrulheiro}`;
-        if (dados.despachante) msg += `\n*Despachante:* ${dados.despachante}`;
-        if (dados.obs)         msg += `\n\n*Obs:* ${dados.obs}`;
+      const banner = document.getElementById('bannerStatusAssuncao');
+      if (banner) {
+        banner.className = 'banner-ok';
+        banner.textContent = res.atualizado 
+          ? '✅ Equipe ATUALIZADA com sucesso na planilha!'
+          : '✅ Equipe salva com sucesso na planilha!';
+      }
 
-        document.getElementById('previewAssuncao').textContent = msg;
-        document.getElementById('linkWhatsAssuncao').href =
-          'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
-        document.getElementById('resultadoAssuncao').classList.remove('hidden');
-        document.getElementById('resultadoAssuncao').scrollIntoView({ behavior: 'smooth' });
+      // Monta mensagem padronizada oficial
+      let msg = `Assunção de Serviço: *${dados.fracao}*\n`;
+      msg += `Equipe: *${dados.posto}*\n`;
+      msg += `Material carga e equipe: ${dados.materialCarga}\n`;
+      if (dados.vtrPlaca) {
+        const pref = dados.vtrPrefixo ? ` (${dados.vtrPrefixo})` : '';
+        msg += `Vtr ${dados.vtrPlaca.toUpperCase()}${pref} - km inicial: ${dados.kmInicial}\n`;
+      }
+      msg += `\n*COMANDANTE:* ${dados.cmt}`;
+      if (dados.motorista)   msg += `\n*Motorista:* ${dados.motorista}`;
+      if (dados.patrulheiro) msg += `\n*Patrulheiro:* ${dados.patrulheiro}`;
+      if (dados.despachante) msg += `\n*Despachante:* ${dados.despachante}`;
+      if (dados.telefone)    msg += `\n*Telefone Funcional:* ${dados.telefone}`;
+      if (dados.obs)         msg += `\n\n*Obs:* ${dados.obs}`;
 
-        // Atualiza turnos e histórico
-        google.script.run.withSuccessHandler(function (r) {
-          listaTurnos = r.turnosAbertos || [];
-          kmPorVtr = r.kmPorVtr || kmPorVtr;
-          equipesPorCmt = r.equipesPorCmt || equipesPorCmt;
-          preencherSelectTurnos();
-        }).getDadosIniciais();
-      })
-      .withFailureHandler(function (err) {
-        btn.disabled = false;
-        btn.innerHTML = '💾 Salvar na Planilha e Gerar WhatsApp';
-        mostrarBannerErro('Erro ao salvar a assunção: ' + err.message);
-      })
-      .salvarAssuncao(dados);
+      document.getElementById('previewAssuncao').textContent = msg;
+      document.getElementById('linkWhatsAssuncao').href =
+        'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
+      
+      const resContainer = document.getElementById('resultadoAssuncao');
+      resContainer.classList.remove('hidden');
+      resContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      google.script.run
+        .withSuccessHandler(function (res) {
+          processarSucesso(res);
+          // Atualiza turnos e histórico
+          google.script.run.withSuccessHandler(function (r) {
+            listaTurnos = r.turnosAbertos || [];
+            kmPorVtr = r.kmPorVtr || kmPorVtr;
+            equipesPorCmt = r.equipesPorCmt || equipesPorCmt;
+            preencherSelectTurnos();
+          }).getDadosIniciais();
+        })
+        .withFailureHandler(function (err) {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '💾 Salvar';
+          }
+          if (btnAtualizar) {
+            btnAtualizar.disabled = false;
+            btnAtualizar.innerHTML = '🔄 ATUALIZAR';
+          }
+          mostrarBannerErro('Erro ao salvar a assunção: ' + err.message);
+        })
+        .salvarAssuncao(dados);
+    } else {
+      // Mock local para testes no navegador
+      setTimeout(function () {
+        processarSucesso({ sucesso: true, idTurno: idTurnoAtualizar || 'LOCAL-SIMULADO-1', atualizado: Boolean(idTurnoAtualizar) });
+      }, 300);
+    }
+  }
+
+  // BOTÃO 1: Adicionar equipe na mesma OPM
+  function adicionarEquipeMesmaOpm() {
+    ultimoIdTurnoSalvo = null;
+
+    // Seleciona RP 02 por padrão para a nova equipe
+    const radioRp02 = document.getElementById('eq-rp02');
+    if (radioRp02) {
+      radioRp02.checked = true;
+      aoMudarEquipeOpcao('RP 02');
+    }
+
+    // Limpa campos da guarnição anterior
+    document.getElementById('cmt').value = '';
+    document.getElementById('motorista').value = '';
+    document.getElementById('patrulheiro').value = '';
+    document.getElementById('despachante').value = '';
+    document.getElementById('obs').value = '';
+    const hintCmt = document.getElementById('hintEquipeCmt');
+    if (hintCmt) hintCmt.classList.add('hidden');
+
+    // Limpa viatura para a nova equipe
+    document.getElementById('vtrPlaca').value = '';
+    document.getElementById('vtrPrefixo').value = '';
+    document.getElementById('kmInicial').value = '';
+    const hintKm = document.getElementById('hintKmInicialVtr');
+    if (hintKm) hintKm.classList.add('hidden');
+
+    // Reexibe o botão Salvar e oculta o container de 4 botões
+    const btnSalvar = document.getElementById('btnSalvarAssuncao');
+    if (btnSalvar) {
+      btnSalvar.classList.remove('hidden');
+      btnSalvar.disabled = false;
+      btnSalvar.innerHTML = '💾 Salvar';
+    }
+    const resContainer = document.getElementById('resultadoAssuncao');
+    if (resContainer) {
+      resContainer.classList.add('hidden');
+    }
+
+    // Rolagem suave de volta para a seção da Equipe
+    const sec = document.getElementById('secaoEquipe');
+    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // BOTÃO 2: ATUALIZAR (editar a equipe atual salva)
+  function atualizarEquipeAtual() {
+    if (!ultimoIdTurnoSalvo) {
+      alert('Nenhum registro recente encontrado para atualizar. Use o botão Salvar.');
+      return;
+    }
+    enviarAssuncao(ultimoIdTurnoSalvo);
   }
 
   // ── Turnos abertos (Encerramento) ────────────────────────────────────────
@@ -767,39 +974,49 @@
       remocoesVeiculos: document.getElementById('remocoesVeiculos').value
     };
 
-    google.script.run
-      .withSuccessHandler(function (res) {
-        btn.disabled = false;
-        btn.innerHTML = '🔒 Encerrar Turno e Gerar WhatsApp';
+    function processarSucessoEncerramento(res) {
+      btn.disabled = false;
+      btn.innerHTML = '🔒 Encerrar Turno e Gerar WhatsApp';
 
-        let msg = `Passagem de Serviço: *${turno.fracao}*\n`;
-        msg += `Data: ${turno.data} | ${turno.posto}\n`;
-        if (turno.vtr) {
-          msg += `Vtr ${turno.vtr} – km final: ${dados.kmFinal} (Rodado: ${res.kmRodado} km)\n`;
-        }
-        msg += `\n*Produtividade do Turno:*\n`;
-        msg += `• Abordagens Pessoas: ${dados.abordagensPessoas}\n`;
-        msg += `• Abordagens Veículos: ${dados.abordagensVeiculos}\n`;
-        msg += `• Autos de Infração: ${dados.autosInfracao}\n`;
-        msg += `• Remoções: ${dados.remocoesVeiculos}`;
+      let msg = `Passagem de Serviço: *${turno ? turno.fracao : 'Sede'}*\n`;
+      msg += `Data: ${turno ? turno.data : '18/11/2026'} | ${turno ? turno.posto : 'RP 01'}\n`;
+      if (turno && turno.vtr) {
+        msg += `Vtr ${turno.vtr} – km final: ${dados.kmFinal} (Rodado: ${res.kmRodado} km)\n`;
+      }
+      msg += `\n*Produtividade do Turno:*\n`;
+      msg += `• Abordagens Pessoas: ${dados.abordagensPessoas}\n`;
+      msg += `• Abordagens Veículos: ${dados.abordagensVeiculos}\n`;
+      msg += `• Autos de Infração: ${dados.autosInfracao}\n`;
+      msg += `• Remoções: ${dados.remocoesVeiculos}`;
 
-        document.getElementById('previewEncerramento').textContent = msg;
-        document.getElementById('linkWhatsEncerramento').href =
-          'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
-        document.getElementById('resultadoEncerramento').classList.remove('hidden');
-        document.getElementById('resultadoEncerramento').scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('previewEncerramento').textContent = msg;
+      document.getElementById('linkWhatsEncerramento').href =
+        'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
+      document.getElementById('resultadoEncerramento').classList.remove('hidden');
+      document.getElementById('resultadoEncerramento').scrollIntoView({ behavior: 'smooth' });
+    }
 
-        google.script.run.withSuccessHandler(function (r) {
-          listaTurnos = r.turnosAbertos || [];
-          preencherSelectTurnos();
-        }).getDadosIniciais();
-      })
-      .withFailureHandler(function (err) {
-        btn.disabled = false;
-        btn.innerHTML = '🔒 Encerrar Turno e Gerar WhatsApp';
-        mostrarBannerErro('Erro ao encerrar: ' + err.message);
-      })
-      .salvarEncerramento(dados);
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      google.script.run
+        .withSuccessHandler(function (res) {
+          processarSucessoEncerramento(res);
+          google.script.run.withSuccessHandler(function (r) {
+            listaTurnos = r.turnosAbertos || [];
+            preencherSelectTurnos();
+          }).getDadosIniciais();
+        })
+        .withFailureHandler(function (err) {
+          btn.disabled = false;
+          btn.innerHTML = '🔒 Encerrar Turno e Gerar WhatsApp';
+          mostrarBannerErro('Erro ao encerrar: ' + err.message);
+        })
+        .salvarEncerramento(dados);
+    } else {
+      setTimeout(function () {
+        const kmRod = Math.max(0, (Number(dados.kmFinal) || 0) - (turno ? turno.kmInicial : 0));
+        processarSucessoEncerramento({ sucesso: true, kmRodado: kmRod });
+      }, 300);
+    }
   }
 
   // ── Utilitários ──────────────────────────────────────────────────────────
