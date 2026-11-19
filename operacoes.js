@@ -10,9 +10,9 @@ const agendaOperacoes = [
         fim: "2027-01-01"
     },
     {
-        nome: "Operação Eleições 2026-1º TURNO",
-        inicio: "2026-10-05",
-        fim: "2026-10-05"
+        nome: "Operação Boas Festas 2026",
+        inicio: "2026-12-01",
+        fim: "2027-01-04"
     },
     {
         nome: "Op. PROVIAVIDAS II 3A",
