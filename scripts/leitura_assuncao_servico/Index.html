@@ -508,26 +508,8 @@
   let equipesAssuncao      = []; // Array com todas as equipes da assunção
   let indiceEquipeEmEdicao = -1; // -1 = nova equipe, >= 0 = editando equipe existente
 
-  // ── Init ─────────────────────────────────────────────────────────────────
-  window.onload = function () {
-    const agora = new Date();
-    document.getElementById('data').value = agora.toISOString().split('T')[0];
-    document.getElementById('hora').value = '08:00';
-
-    if (typeof google !== 'undefined' && google.script && google.script.run) {
-      // Ambiente Google Apps Script (Produção)
-      google.script.run
-        .withSuccessHandler(inicializarDados)
-        .withFailureHandler(function (err) {
-          document.getElementById('loading').innerHTML =
-            '<span class="text-red-600 font-bold">⚠️ Erro ao carregar dados: ' + err.message + '</span>';
-        })
-        .getDadosIniciais();
-    } else {
-      // Mock local completo com TODOS os 77 policiais da 14ª CIPM para http://localhost:8000
-      setTimeout(function () {
-        inicializarDados({
-          efetivo: [
+  // ── Efetivo Oficial da 14ª CIPM (77 Policiais) ───────────────────────────
+  const EFETIVO_OFICIAL_PADRAO = [
   {
     "nome": "1SGT ALEXANDER",
     "nomeGuerra": "ALEXANDER",
@@ -1067,28 +1049,65 @@
     "cidade": "ELDORADO",
     "telefone": "(67) 99946-7840"
   }
-],
-          turnosAbertos: [
-            { idTurno: '20261118-SEDE-RP01-SIM', data: '18/11/2026', fracao: 'Sede', posto: 'RP 01', vtr: 'REW-3B07', kmInicial: 45200, cmt: '1SGT LUCIANO' }
-          ],
-          kmPorVtr: { 'REW-3B07': 45200, 'SMK-3C53': 38100, 'SMK-7A60': 61200, 'UGY-3H55': 29400 },
-          equipesPorCmt: {
-            '1SGT LUCIANO': { motorista: 'CB CASSIO', patrulheiro: '', despachante: 'CB BORGES' },
-            '3SGT AIRAN':   { motorista: 'SD BRUNO',  patrulheiro: '', despachante: 'CB EDGAR' }
-          }
+];
+
+  // ── Init ─────────────────────────────────────────────────────────────────
+  window.onload = function () {
+    const agora = new Date();
+    document.getElementById('data').value = agora.toISOString().split('T')[0];
+    document.getElementById('hora').value = '08:00';
+
+    let carregado = false;
+    const safetyTimeout = setTimeout(function () {
+      if (!carregado) {
+        console.warn('Tempo limite de resposta do servidor excedido. Inicializando com efetivo oficial.');
+        onDadosCarregados({ efetivo: EFETIVO_OFICIAL_PADRAO });
+      }
+    }, 4500);
+
+    function onDadosCarregados(res) {
+      if (carregado) return;
+      carregado = true;
+      clearTimeout(safetyTimeout);
+      inicializarDados(res);
+    }
+
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      // Ambiente Google Apps Script Online
+      google.script.run
+        .withSuccessHandler(onDadosCarregados)
+        .withFailureHandler(function (err) {
+          console.error('Erro getDadosIniciais:', err);
+          onDadosCarregados({ efetivo: EFETIVO_OFICIAL_PADRAO, erro: err.message });
+        })
+        .getDadosIniciais();
+    } else {
+      // Ambiente Localhost (http://localhost:8000)
+      fetch('/api/dados-iniciais')
+        .then(r => r.json())
+        .then(res => onDadosCarregados(res))
+        .catch(err => {
+          console.warn('API local offline, usando contingência embutida:', err);
+          onDadosCarregados({ efetivo: EFETIVO_OFICIAL_PADRAO });
         });
-      }, 150);
     }
   };
 
   function inicializarDados(res) {
-    listaEfetivo  = res.efetivo       || [];
-    listaTurnos   = res.turnosAbertos  || [];
-    kmPorVtr      = res.kmPorVtr       || {};
-    equipesPorCmt = res.equipesPorCmt  || {};
+    if (res && res.efetivo && res.efetivo.length >= 10) {
+      listaEfetivo = res.efetivo;
+    } else {
+      console.warn('Utilizando lista oficial de 77 policiais da 14ª CIPM');
+      listaEfetivo = EFETIVO_OFICIAL_PADRAO;
+    }
+    listaTurnos   = (res && res.turnosAbertos) || [];
+    kmPorVtr      = (res && res.kmPorVtr)      || {};
+    equipesPorCmt = (res && res.equipesPorCmt) || {};
 
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('abaAssuncao').classList.remove('hidden');
+    const elLoad = document.getElementById('loading');
+    if (elLoad) elLoad.classList.add('hidden');
+    const elAss = document.getElementById('abaAssuncao');
+    if (elAss) elAss.classList.remove('hidden');
 
     aoMudarFracao();
     preencherSelectTurnos();
@@ -1341,7 +1360,11 @@
     const estaOculto = dropdown.classList.contains('hidden');
     document.querySelectorAll('[id^="dropdown-"]').forEach(d => d.classList.add('hidden'));
     if (estaOculto) {
-      dropdown.classList.remove('hidden');
+      const idInput = idDropdown.replace('dropdown-', '');
+      const input = document.getElementById(idInput);
+      if (input) {
+        input.focus();
+      }
     }
   }
 
@@ -1687,11 +1710,46 @@
         })
         .salvarAssuncao(dadosGerais);
     } else {
-      // Mock local
-      setTimeout(function () {
-        const mockIds = equipesAssuncao.map((e, i) => 'LOCAL-' + Date.now() + '-' + i);
-        processarSucesso({ sucesso: true, idTurnos: mockIds, atualizado: Boolean(isAtualizacao) });
-      }, 350);
+      // Salva de verdade na planilha via servidor Localhost (http://localhost:8000/api/salvar-assuncao)
+      fetch('/api/salvar-assuncao', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dadosGerais)
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res && res.sucesso) {
+          processarSucesso({
+            sucesso: true,
+            idTurnos: res.idTurnos,
+            totalEquipes: res.totalEquipes,
+            atualizado: Boolean(isAtualizacao)
+          });
+          // Atualiza dados na memória
+          fetch('/api/dados-iniciais')
+            .then(r => r.json())
+            .then(r => {
+              listaTurnos = r.turnosAbertos || [];
+              kmPorVtr = r.kmPorVtr || kmPorVtr;
+              equipesPorCmt = r.equipesPorCmt || equipesPorCmt;
+              preencherSelectTurnos();
+            })
+            .catch(() => {});
+        } else {
+          throw new Error(res.erro || 'Falha ao salvar na planilha');
+        }
+      })
+      .catch(err => {
+        if (btnSalvar) {
+          btnSalvar.disabled = false;
+          btnSalvar.innerHTML = '💾 Salvar Assunção';
+        }
+        if (btnAtualizar) {
+          btnAtualizar.disabled = false;
+          btnAtualizar.innerHTML = '🔄 ATUALIZAR';
+        }
+        mostrarBannerErro('Erro ao salvar na planilha via localhost: ' + err.message);
+      });
     }
   }
 
@@ -1799,10 +1857,32 @@
         })
         .salvarEncerramento(dados);
     } else {
-      setTimeout(function () {
-        const kmRod = Math.max(0, (Number(dados.kmFinal) || 0) - (turno ? turno.kmInicial : 0));
-        processarSucessoEncerramento({ sucesso: true, kmRodado: kmRod });
-      }, 300);
+      // Grava encerramento de verdade na planilha via servidor Localhost
+      fetch('/api/salvar-encerramento', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res && res.sucesso) {
+          processarSucessoEncerramento(res);
+          fetch('/api/dados-iniciais')
+            .then(r => r.json())
+            .then(r => {
+              listaTurnos = r.turnosAbertos || [];
+              preencherSelectTurnos();
+            })
+            .catch(() => {});
+        } else {
+          throw new Error(res.erro || 'Falha ao encerrar na planilha');
+        }
+      })
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = '🔒 Encerrar Turno e Gerar WhatsApp';
+        mostrarBannerErro('Erro ao encerrar na planilha via localhost: ' + err.message);
+      });
     }
   }
 

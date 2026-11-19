@@ -1,0 +1,541 @@
+[
+  {
+    "nome": "1SGT ALEXANDER",
+    "nomeGuerra": "ALEXANDER",
+    "nomeCompleto": "ALEXANDER BATISTA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9294-8635"
+  },
+  {
+    "nome": "1SGT DIAS",
+    "nomeGuerra": "DIAS",
+    "nomeCompleto": "CLAUDEMIR JOSE DIAS",
+    "cidade": "JAPORA",
+    "telefone": "(67) 8167-8237"
+  },
+  {
+    "nome": "1SGT EDSON SILVA",
+    "nomeGuerra": "EDSON SILVA",
+    "nomeCompleto": "EDSON DA SILVA SANTOS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99281-4774"
+  },
+  {
+    "nome": "1SGT LUCIANO",
+    "nomeGuerra": "LUCIANO",
+    "nomeCompleto": "LUCIANO DALCIR URBANSKI WAYHS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 9220-0738"
+  },
+  {
+    "nome": "1SGT RAMALHO",
+    "nomeGuerra": "RAMALHO",
+    "nomeCompleto": "NATAL CESAR DE LIMA RAMALHO",
+    "cidade": "JAPORA",
+    "telefone": "(67) 9200-5312"
+  },
+  {
+    "nome": "1TEN BENEDITO",
+    "nomeGuerra": "BENEDITO",
+    "nomeCompleto": "LUCAS BENEDITO DE OLIVEIRA DA SILVA",
+    "cidade": "JAPORA",
+    "telefone": "(67) 99112-2839"
+  },
+  {
+    "nome": "2SGT APARECIDO",
+    "nomeGuerra": "APARECIDO",
+    "nomeCompleto": "APARECIDO FERREIRA DA SILVA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99848-5300"
+  },
+  {
+    "nome": "2SGT CARLOS",
+    "nomeGuerra": "CARLOS",
+    "nomeCompleto": "CARLOS DOS SANTOS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99303-7229"
+  },
+  {
+    "nome": "2SGT CARLOS SILVA",
+    "nomeGuerra": "CARLOS SILVA",
+    "nomeCompleto": "CARLOS DA SILVA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99687-4018"
+  },
+  {
+    "nome": "2SGT LEAL",
+    "nomeGuerra": "LEAL",
+    "nomeCompleto": "MARCOS LEAL DA SILVA",
+    "cidade": "PORTO MORUMBI",
+    "telefone": "(67) 99601-5327"
+  },
+  {
+    "nome": "2SGT MARCOS",
+    "nomeGuerra": "MARCOS",
+    "nomeCompleto": "MARCOS ROBERTO BIANCHINI",
+    "cidade": "JAPORA",
+    "telefone": "(67) 98218-1857"
+  },
+  {
+    "nome": "2SGT OSVALDO",
+    "nomeGuerra": "OSVALDO",
+    "nomeCompleto": "OSVALDO COELHO NUNES",
+    "cidade": "JAPORA",
+    "telefone": "(67) 98128-5654"
+  },
+  {
+    "nome": "2SGT PIETROBELLI",
+    "nomeGuerra": "PIETROBELLI",
+    "nomeCompleto": "GICYLAU PIETROBELLI",
+    "cidade": "JAPORA",
+    "telefone": "(67) 98140-1871"
+  },
+  {
+    "nome": "2SGT VALE",
+    "nomeGuerra": "VALE",
+    "nomeCompleto": "ROBERTO CARLOS VALE",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99149-3063"
+  },
+  {
+    "nome": "2TEN ALEX JHONNY",
+    "nomeGuerra": "ALEX JHONNY",
+    "nomeCompleto": "ALEX JHONNY DA SILVA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99137-4000"
+  },
+  {
+    "nome": "3SGT AIRAN",
+    "nomeGuerra": "AIRAN",
+    "nomeCompleto": "AIRAN AMARAL RODRIGUES",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 9219-0418"
+  },
+  {
+    "nome": "3SGT EMERSON",
+    "nomeGuerra": "EMERSON",
+    "nomeCompleto": "ALESSANDRO EMERSON COELHO DOS SANTOS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99187-6896"
+  },
+  {
+    "nome": "3SGT IVAN",
+    "nomeGuerra": "IVAN",
+    "nomeCompleto": "IVAN DOS SANTOS SOUZA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99213-0116"
+  },
+  {
+    "nome": "3SGT MACIEL",
+    "nomeGuerra": "MACIEL",
+    "nomeCompleto": "WELVIS PEREIRA MACIEL",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99343-8786"
+  },
+  {
+    "nome": "3SGT MAKOTO",
+    "nomeGuerra": "MAKOTO",
+    "nomeCompleto": "MARIO JUNIOR MAKOTO SATO",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(44) 9143-4856"
+  },
+  {
+    "nome": "3SGT PAULO MARCOS",
+    "nomeGuerra": "PAULO MARCOS",
+    "nomeCompleto": "PAULO MARCOS ROSA DOS SANTOS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 9627-5100"
+  },
+  {
+    "nome": "3SGT SAMUEL",
+    "nomeGuerra": "SAMUEL",
+    "nomeCompleto": "SAMUEL PEREIRA",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99601-5327"
+  },
+  {
+    "nome": "3SGT VALDECIR",
+    "nomeGuerra": "VALDECIR",
+    "nomeCompleto": "VALDECIR PINHEIRO ALVES",
+    "cidade": "ELDORADO",
+    "telefone": "(44) 9829-4535"
+  },
+  {
+    "nome": "3SGT VIDIGAL",
+    "nomeGuerra": "VIDIGAL",
+    "nomeCompleto": "ALESSANDRO VIDIGAL DOS SANTOS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9286-7933"
+  },
+  {
+    "nome": "CAP FELIZOLA",
+    "nomeGuerra": "FELIZOLA",
+    "nomeCompleto": "WILSON BARBOSA FELIZOLA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99896-2540"
+  },
+  {
+    "nome": "CAP NEURI",
+    "nomeGuerra": "NEURI",
+    "nomeCompleto": "NEURI LUIZ ROSENI",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99120-7582"
+  },
+  {
+    "nome": "CAP NEURI",
+    "nomeGuerra": "NEURI",
+    "nomeCompleto": "NEURI LUIZ ROSENI",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99120-7582"
+  },
+  {
+    "nome": "CB BELMIRO",
+    "nomeGuerra": "BELMIRO",
+    "nomeCompleto": "REGINALDO BELMIRO MENDES",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 8114-4715"
+  },
+  {
+    "nome": "CB BORGES",
+    "nomeGuerra": "BORGES",
+    "nomeCompleto": "JHONATAN CARLOS CARNEIRO BORGES",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 9632-8188"
+  },
+  {
+    "nome": "CB CANDIDO",
+    "nomeGuerra": "CANDIDO",
+    "nomeCompleto": "DENIS CANDIDO DE OLIVEIRA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 8403-4480"
+  },
+  {
+    "nome": "CB CARINA",
+    "nomeGuerra": "CARINA",
+    "nomeCompleto": "CARINA MAYARA CESARE",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99281-6966"
+  },
+  {
+    "nome": "CB CARVALHO",
+    "nomeGuerra": "CARVALHO",
+    "nomeCompleto": "GEBERSON BONIFACIO DE CARVALHO",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99625-4621"
+  },
+  {
+    "nome": "CB CASSIO",
+    "nomeGuerra": "CASSIO",
+    "nomeCompleto": "BRUNO CASSIO PINHEIRO DOS SANTOS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99950-2181"
+  },
+  {
+    "nome": "CB CASTILHO",
+    "nomeGuerra": "CASTILHO",
+    "nomeCompleto": "CARLOS HENRIQUE CASTILHO DE LIMA MEDEIROS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99335-9214"
+  },
+  {
+    "nome": "CB CLAUDIO LOPES",
+    "nomeGuerra": "CLAUDIO LOPES",
+    "nomeCompleto": "CLAUDIO DE SOUZA LOPES",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9238-3799"
+  },
+  {
+    "nome": "CB DAYANE",
+    "nomeGuerra": "DAYANE",
+    "nomeCompleto": "DAYANE MADEIRA FONTES",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9630-7747"
+  },
+  {
+    "nome": "CB DE SOUZA",
+    "nomeGuerra": "DE SOUZA",
+    "nomeCompleto": "LEANDRO DE SOUZA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99121-4808"
+  },
+  {
+    "nome": "CB DENYS",
+    "nomeGuerra": "DENYS",
+    "nomeCompleto": "DENYS RAFAEL FRANCISCO PHELIPPE HAVEROTH",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99196-3884"
+  },
+  {
+    "nome": "CB E MARTINS",
+    "nomeGuerra": "E MARTINS",
+    "nomeCompleto": "EDUARDO BACHEGA MARTINS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(44) 99842-7083"
+  },
+  {
+    "nome": "CB EDGAR",
+    "nomeGuerra": "EDGAR",
+    "nomeCompleto": "EDGAR BACHEGA MARTINS",
+    "cidade": "ELDORADO",
+    "telefone": "(44) 99828-6576"
+  },
+  {
+    "nome": "CB EMERSON",
+    "nomeGuerra": "EMERSON",
+    "nomeCompleto": "EMERSON ROMARIO SENE PORTEIRO",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99257-1239"
+  },
+  {
+    "nome": "CB FERNANDO",
+    "nomeGuerra": "FERNANDO",
+    "nomeCompleto": "NIJEUDO FERNANDO ACOSTA DA SILVA",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 97400-7458"
+  },
+  {
+    "nome": "CB MAICON",
+    "nomeGuerra": "MAICON",
+    "nomeCompleto": "MAICON BATISTA SILVA",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99618-2125"
+  },
+  {
+    "nome": "CB NATALICIO",
+    "nomeGuerra": "NATALICIO",
+    "nomeCompleto": "EDERSON NATALICIO MARSCHNER",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(45) 93300-5837"
+  },
+  {
+    "nome": "CB NOVAES",
+    "nomeGuerra": "NOVAES",
+    "nomeCompleto": "JEFFERSON NOVAES DA SILVA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99104-9582"
+  },
+  {
+    "nome": "CB PEREIRA",
+    "nomeGuerra": "PEREIRA",
+    "nomeCompleto": "LEANDRO PAVAO PEREIRA DIAS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99155-0791"
+  },
+  {
+    "nome": "CB UELTON",
+    "nomeGuerra": "UELTON",
+    "nomeCompleto": "UELTON FRANCA OLIVEIRA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99866-8343"
+  },
+  {
+    "nome": "CB WILLIAN",
+    "nomeGuerra": "WILLIAN",
+    "nomeCompleto": "WILLIAN MORIS BACCIN",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99161-1688"
+  },
+  {
+    "nome": "MAJ CAMARGO",
+    "nomeGuerra": "CAMARGO",
+    "nomeCompleto": "GESSÉ CAMARGO JÚNIOR",
+    "cidade": "CPA 4",
+    "telefone": "(67) 98473-2035"
+  },
+  {
+    "nome": "MAJOR PECHEFIST",
+    "nomeGuerra": "PECHEFIST",
+    "nomeCompleto": "ADRIANO PECHEFIST",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99343-1853"
+  },
+  {
+    "nome": "SD ADRIANO",
+    "nomeGuerra": "ADRIANO",
+    "nomeCompleto": "ADRIANO GONÇALVES LEITE",
+    "cidade": "ELDORADO",
+    "telefone": "(44) 8837-0729"
+  },
+  {
+    "nome": "SD ALISSON",
+    "nomeGuerra": "ALISSON",
+    "nomeCompleto": "ALISSON FERNANDO DOS SANTOS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99113-0188"
+  },
+  {
+    "nome": "SD ALMEIDA",
+    "nomeGuerra": "ALMEIDA",
+    "nomeCompleto": "BRUNO DOS SANTOS ALMEIDA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99171-6666"
+  },
+  {
+    "nome": "SD BRUNO",
+    "nomeGuerra": "BRUNO",
+    "nomeCompleto": "BRUNO DA SILVA MACHADO",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 9824-8774"
+  },
+  {
+    "nome": "SD D BRITO",
+    "nomeGuerra": "D BRITO",
+    "nomeCompleto": "DOUGLAS BRITO DE OLIVEIRA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99921-3262"
+  },
+  {
+    "nome": "SD DIAS",
+    "nomeGuerra": "DIAS",
+    "nomeCompleto": "WILLIAN COSTA DIAS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99636-7840"
+  },
+  {
+    "nome": "SD EDLENE",
+    "nomeGuerra": "EDLENE",
+    "nomeCompleto": "EDLENE DE SOUZA HAVEROTH",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99234-6493"
+  },
+  {
+    "nome": "SD EDUARDO",
+    "nomeGuerra": "EDUARDO",
+    "nomeCompleto": "EDUARDO DE SOUZA LOPES",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99943-5562"
+  },
+  {
+    "nome": "SD FLAVIO",
+    "nomeGuerra": "FLAVIO",
+    "nomeCompleto": "FLAVIO ALVES RIBEIRO",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 98130-7971"
+  },
+  {
+    "nome": "SD HELLEN",
+    "nomeGuerra": "HELLEN",
+    "nomeCompleto": "HELLEN LORRAINE ROCHA FRANÇA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99618-0446"
+  },
+  {
+    "nome": "SD JOAO REIS",
+    "nomeGuerra": "JOAO REIS",
+    "nomeCompleto": "JOAO VICTOR RAMALHO REIS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9257-3425"
+  },
+  {
+    "nome": "SD LEANDRO",
+    "nomeGuerra": "LEANDRO",
+    "nomeCompleto": "LEANDRO BRUNO DA SILVA DOS SANTOS",
+    "cidade": "ELDORADO",
+    "telefone": "(44) 8860-0642"
+  },
+  {
+    "nome": "SD M.MEDEIROS",
+    "nomeGuerra": "M.MEDEIROS",
+    "nomeCompleto": "MURILO HENRIQUE MEDEIROS ROSA",
+    "cidade": "PORTO MORUMBI",
+    "telefone": "(67) 98475-1953"
+  },
+  {
+    "nome": "SD MATTHEUS",
+    "nomeGuerra": "MATTHEUS",
+    "nomeCompleto": "MATTHEUS ROCHA LEITE",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 8433-7747"
+  },
+  {
+    "nome": "SD MONTANINI",
+    "nomeGuerra": "MONTANINI",
+    "nomeCompleto": "VINICIUS MUNIZ MONTANINI",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99862-2674"
+  },
+  {
+    "nome": "SD MORAES NETO",
+    "nomeGuerra": "MORAES NETO",
+    "nomeCompleto": "ELISEO BRITES DE MORAES NETO",
+    "cidade": "IGUATEMI",
+    "telefone": "(45) 99851-5329"
+  },
+  {
+    "nome": "SD SULIANO",
+    "nomeGuerra": "SULIANO",
+    "nomeCompleto": "VANDER LUIS SULIANO DOS SANTOS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 98207-1380"
+  },
+  {
+    "nome": "SD TALITA",
+    "nomeGuerra": "TALITA",
+    "nomeCompleto": "TALITA CARLA NORBERTO",
+    "cidade": "ELDORADO",
+    "telefone": "(44) 98803-8331"
+  },
+  {
+    "nome": "SD TIBER",
+    "nomeGuerra": "TIBER",
+    "nomeCompleto": "ANTONIO CARLOS TIBER",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 98100-2902"
+  },
+  {
+    "nome": "SD ZART",
+    "nomeGuerra": "ZART",
+    "nomeCompleto": "CRISTYANN ADRIANO ZART",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99941-0251"
+  },
+  {
+    "nome": "ST ANDRE",
+    "nomeGuerra": "ANDRE",
+    "nomeCompleto": "LUCIMAR ALMEIDA ANDRE",
+    "cidade": "JAPORA",
+    "telefone": "(67) 9299-0266"
+  },
+  {
+    "nome": "ST CLAUDIO",
+    "nomeGuerra": "CLAUDIO",
+    "nomeCompleto": "CLAUDIO JAIR GUCKERT",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 9878-4513"
+  },
+  {
+    "nome": "ST CLAUDIO",
+    "nomeGuerra": "CLAUDIO",
+    "nomeCompleto": "CLAUDIO JODIVAN CAVALCANTE",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99228-0417"
+  },
+  {
+    "nome": "ST DE SOUZA",
+    "nomeGuerra": "DE SOUZA",
+    "nomeCompleto": "REGINALDO PEREIRA DE SOUZA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99846-5607"
+  },
+  {
+    "nome": "ST GIMENES",
+    "nomeGuerra": "GIMENES",
+    "nomeCompleto": "EDSON GIMENES",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99281-4774"
+  },
+  {
+    "nome": "ST NILSON",
+    "nomeGuerra": "NILSON",
+    "nomeCompleto": "NILSON OTAVIANO DA SILVA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9278-6960"
+  },
+  {
+    "nome": "ST OLIVEIRA",
+    "nomeGuerra": "OLIVEIRA",
+    "nomeCompleto": "ANTONIO DE OLIVEIRA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99946-7840"
+  }
+]
