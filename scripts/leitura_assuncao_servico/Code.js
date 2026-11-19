@@ -154,14 +154,17 @@ function listarEfetivo_(ss) {
     const grad = String(dados[i][2] || '').trim();
     const cidade = String(dados[i][3] || '').trim().toUpperCase();
     const nomeGuerra = String(dados[i][4] || '').trim();
+    const nomeCompleto = String(dados[i][5] || '').trim();
     const telefone = dados[i][8];
-    if (!nomeGuerra) continue;
+    if (!nomeGuerra && !nomeCompleto) continue;
 
     const gradCurta = grad ? grad.split(' ')[0] : '';
-    const exibicao = (gradCurta ? gradCurta + ' ' : '') + nomeGuerra;
+    const exibicao = (gradCurta ? gradCurta + ' ' : '') + (nomeGuerra || nomeCompleto);
 
     lista.push({
       nome: exibicao,
+      nomeGuerra: nomeGuerra,
+      nomeCompleto: nomeCompleto,
       cidade: cidade,
       telefone: formatarTelefone_(telefone)
     });
@@ -248,6 +251,44 @@ function salvarAssuncao(dados) {
     'ID_Turno', 'Data_Servico', 'Fracao', 'VTR_Placa', 'Policial', 'Funcao', 'Pontua_Equipe_VTR'
   ]);
 
+  const lista = (dados.equipes && Array.isArray(dados.equipes) && dados.equipes.length > 0)
+    ? dados.equipes
+    : [dados];
+
+  const resultados = [];
+  lista.forEach(function (eq, idx) {
+    const item = {
+      data:             dados.data || eq.data,
+      hora:             dados.hora || eq.hora,
+      fracao:           dados.fracao || eq.fracao,
+      regime:           dados.regime || eq.regime,
+      telefone:         dados.telefone || eq.telefone,
+      idTurnoAtualizar: eq.idTurnoAtualizar || null,
+      posto:            eq.posto,
+      vtrPlaca:         eq.vtrPlaca,
+      vtrPrefixo:       eq.vtrPrefixo,
+      kmInicial:        eq.kmInicial,
+      materialCarga:    eq.materialCarga,
+      obs:              eq.obs,
+      cmt:              eq.cmt,
+      motorista:        eq.motorista,
+      patrulheiro:      eq.patrulheiro,
+      despachante:      eq.despachante
+    };
+    resultados.push(salvarUmaEquipeAssuncao_(ss, sheetPlantao, sheetGuarnicao, item));
+  });
+
+  return {
+    sucesso: true,
+    totalEquipes: resultados.length,
+    resultados: resultados,
+    idTurnos: resultados.map(function (r) { return r.idTurno; }),
+    idTurno: resultados[0] ? resultados[0].idTurno : null,
+    atualizado: resultados.some(function (r) { return r.atualizado; })
+  };
+}
+
+function salvarUmaEquipeAssuncao_(ss, sheetPlantao, sheetGuarnicao, dados) {
   const partesData = dados.data.split('-');
   const dataBr = `${partesData[2]}/${partesData[1]}/${partesData[0]}`;
   const carimbo = Utilities.formatDate(new Date(), 'America/Campo_Grande', 'dd/MM/yyyy HH:mm:ss');
@@ -299,8 +340,8 @@ function salvarAssuncao(dados) {
     // NOVO REGISTRO
     const dataLimpa = dados.data.replace(/-/g, '');
     const siglaFracao = dados.fracao.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-    const siglaPosto = dados.posto.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-    const sufixo = Utilities.formatDate(new Date(), 'America/Campo_Grande', 'HHmmss');
+    const siglaPosto = (dados.posto || 'EQ').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    const sufixo = Utilities.formatDate(new Date(), 'America/Campo_Grande', 'HHmmss') + '-' + Math.floor(Math.random() * 900 + 100);
     idTurno = `${dataLimpa}-${siglaFracao}-${siglaPosto}-${sufixo}`;
 
     sheetPlantao.appendRow([
@@ -357,7 +398,7 @@ function salvarAssuncao(dados) {
       .setValues(linhasGuarnicao);
   }
 
-  return { sucesso: true, idTurno: idTurno, dataBr: dataBr, atualizado: (linhaPlantaoAlvo > -1) };
+  return { idTurno: idTurno, dataBr: dataBr, atualizado: (linhaPlantaoAlvo > -1) };
 }
 
 function salvarEncerramento(dados) {

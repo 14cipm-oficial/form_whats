@@ -173,6 +173,18 @@
             </div>
           </div>
 
+          <!-- Card de Equipes Adicionadas nesta Assunção -->
+          <div id="containerEquipesAdicionadas" class="hidden mb-3 bg-blue-50/90 border border-blue-200 rounded-lg p-3 shadow-sm">
+            <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-blue-200">
+              <span class="text-xs font-bold text-pm-marinho uppercase tracking-wider flex items-center gap-1.5">
+                <span>📋 Equipes Adicionadas</span>
+                <span id="badgeQtdEquipes" class="bg-blue-700 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full">0</span>
+              </span>
+              <span class="text-[11px] text-blue-800 font-semibold">Serão enviadas juntas no WhatsApp</span>
+            </div>
+            <div id="listaCardsEquipes" class="space-y-1.5"></div>
+          </div>
+
           <!-- Bloco Equipe (RP 01, RP 02, Cadastrar Equipe...) + Regime -->
           <div class="mb-1" id="secaoEquipe">
             <div class="flex items-center justify-between mb-1.5">
@@ -297,25 +309,35 @@
           </div>
         </div>
 
-        <!-- BOTÃO INICIAL: Salvar -->
-        <button type="button" id="btnSalvarAssuncao"
-          onclick="enviarAssuncao()"
-          class="w-full py-4 bg-pm-marinho text-white font-extrabold rounded-lg shadow-lg hover:bg-slate-800 transition-all text-base tracking-wide uppercase flex items-center justify-center gap-2">
-          💾 Salvar
-        </button>
+        <!-- BOTÕES PRÉ-SALVAMENTO (Visíveis antes de salvar) -->
+        <div id="containerBotoesPreSalvar" class="space-y-2.5">
+          <!-- BOTÃO: Adicionar outra Equipe -->
+          <button type="button" id="btnAdicionarOutraEquipe"
+            onclick="adicionarOutraEquipe()"
+            class="w-full py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-extrabold rounded-lg shadow-md transition-all text-sm uppercase tracking-wide flex items-center justify-center gap-2 border border-blue-900">
+            ➕ Adicionar outra Equipe
+          </button>
 
-        <!-- CONTAINER APÓS SALVAR: TRANSFORMAÇÃO EM 4 BOTÕES -->
+          <!-- BOTÃO: Salvar Assunção -->
+          <button type="button" id="btnSalvarAssuncao"
+            onclick="salvarTodasEquipes()"
+            class="w-full py-4 bg-pm-marinho text-white font-extrabold rounded-lg shadow-lg hover:bg-slate-800 transition-all text-base tracking-wide uppercase flex items-center justify-center gap-2">
+            💾 Salvar Assunção
+          </button>
+        </div>
+
+        <!-- CONTAINER APÓS SALVAR: AÇÕES FINAIS -->
         <div id="resultadoAssuncao" class="hidden space-y-3">
           <div id="bannerStatusAssuncao" class="banner-ok">✅ Equipe salva com sucesso na planilha!</div>
 
-          <!-- BOTÃO 1: Adicionar equipe na mesma OPM -->
-          <button type="button" id="btnNovaEquipeMesmaOpm" onclick="adicionarEquipeMesmaOpm()"
+          <!-- BOTÃO 1: Adicionar outra Equipe -->
+          <button type="button" id="btnNovaEquipeMesmaOpm" onclick="adicionarOutraEquipePosSalvar()"
             class="w-full py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-extrabold rounded-lg shadow-md transition-all text-sm uppercase tracking-wide flex items-center justify-center gap-2">
-            ➕ Adicionar Equipe na Mesma OPM
+            ➕ Adicionar outra Equipe
           </button>
 
-          <!-- BOTÃO 2: ATUALIZAR (editar a equipe que acabou de salvar) -->
-          <button type="button" id="btnAtualizarEquipe" onclick="atualizarEquipeAtual()"
+          <!-- BOTÃO 2: ATUALIZAR -->
+          <button type="button" id="btnAtualizarEquipe" onclick="atualizarAssuncao()"
             class="w-full py-3.5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold rounded-lg shadow-md transition-all text-sm uppercase tracking-wide flex items-center justify-center gap-2">
             🔄 ATUALIZAR
           </button>
@@ -474,25 +496,26 @@
     'Sede':             { cidades: ['MUNDO NOVO'],               placa: 'REW-3B07', prefixo: '10.3184', tel: '67 99268-5540' },
     '2° PEL Iguatemi':   { cidades: ['IGUATEMI'],                  placa: 'SMK-3C53', prefixo: '10.3757', tel: '67 99211-5349' },
     '3° PEL Japorã':     { cidades: ['JAPORA'],                    placa: 'SMK-7A60', prefixo: '10.3747', tel: '67 99282-0703' },
-    '4° PEL Eldorado':   { cidades: ['ELDORADO', 'PORTO MORUMBI'], placa: 'UGY-3H55', prefixo: '10.3975', tel: '67 99217-3603' },
-    'Morumbi':           { cidades: ['PORTO MORUMBI', 'ELDORADO'], placa: 'UGY-3H55', prefixo: '10.3975', tel: '67 99217-3603' }
+    '4° PEL Eldorado':   { cidades: ['ELDORADO', 'PORTO MORUMBI'], placa: 'UGY-3H55', prefixo: '10.3975', tel: '67 99217-3603' }
   };
 
-  let listaEfetivo  = [];
-  let listaTurnos   = [];
-  let kmPorVtr      = {};
-  let equipesPorCmt = {};
-  let ultimoIdTurnoSalvo = null;
+  let listaEfetivo         = [];
+  let listaTurnos          = [];
+  let kmPorVtr             = {};
+  let equipesPorCmt        = {};
+
+  // Estado Multi-Equipes
+  let equipesAssuncao      = []; // Array com todas as equipes da assunção
+  let indiceEquipeEmEdicao = -1; // -1 = nova equipe, >= 0 = editando equipe existente
 
   // ── Init ─────────────────────────────────────────────────────────────────
   window.onload = function () {
     const agora = new Date();
     document.getElementById('data').value = agora.toISOString().split('T')[0];
-    // Horário padrão da hora da assunção: 08:00
     document.getElementById('hora').value = '08:00';
 
     if (typeof google !== 'undefined' && google.script && google.script.run) {
-      // Execução no ambiente Google Apps Script
+      // Ambiente Google Apps Script (Produção)
       google.script.run
         .withSuccessHandler(inicializarDados)
         .withFailureHandler(function (err) {
@@ -501,21 +524,550 @@
         })
         .getDadosIniciais();
     } else {
-      // Mock local para testes no navegador em http://localhost:8000
+      // Mock local completo com TODOS os 77 policiais da 14ª CIPM para http://localhost:8000
       setTimeout(function () {
         inicializarDados({
           efetivo: [
-            { nome: '1SGT LUCIANO', cidade: 'MUNDO NOVO', telefone: '(67) 99268-5540' },
-            { nome: 'CB CASSIO', cidade: 'MUNDO NOVO', telefone: '(67) 99950-2181' },
-            { nome: 'CB BORGES', cidade: 'MUNDO NOVO', telefone: '(67) 99632-8188' },
-            { nome: '3SGT AIRAN', cidade: 'ELDORADO', telefone: '(67) 9219-0418' },
-            { nome: 'SD BRUNO', cidade: 'ELDORADO', telefone: '(67) 9824-8774' },
-            { nome: 'CB EDGAR', cidade: 'ELDORADO', telefone: '(44) 99828-6576' },
-            { nome: 'ST ANDRE', cidade: 'JAPORA', telefone: '(67) 99282-0703' },
-            { nome: 'SD D BRITO', cidade: 'JAPORA', telefone: '(67) 9992-1326' },
-            { nome: '3SGT PAULO MARCOS', cidade: 'IGUATEMI', telefone: '(67) 99211-5349' },
-            { nome: 'CB FERNANDO', cidade: 'IGUATEMI', telefone: '(67) 99211-5349' }
-          ],
+  {
+    "nome": "1SGT ALEXANDER",
+    "nomeGuerra": "ALEXANDER",
+    "nomeCompleto": "ALEXANDER BATISTA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9294-8635"
+  },
+  {
+    "nome": "1SGT DIAS",
+    "nomeGuerra": "DIAS",
+    "nomeCompleto": "CLAUDEMIR JOSE DIAS",
+    "cidade": "JAPORA",
+    "telefone": "(67) 8167-8237"
+  },
+  {
+    "nome": "1SGT EDSON SILVA",
+    "nomeGuerra": "EDSON SILVA",
+    "nomeCompleto": "EDSON DA SILVA SANTOS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99281-4774"
+  },
+  {
+    "nome": "1SGT LUCIANO",
+    "nomeGuerra": "LUCIANO",
+    "nomeCompleto": "LUCIANO DALCIR URBANSKI WAYHS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 9220-0738"
+  },
+  {
+    "nome": "1SGT RAMALHO",
+    "nomeGuerra": "RAMALHO",
+    "nomeCompleto": "NATAL CESAR DE LIMA RAMALHO",
+    "cidade": "JAPORA",
+    "telefone": "(67) 9200-5312"
+  },
+  {
+    "nome": "1TEN BENEDITO",
+    "nomeGuerra": "BENEDITO",
+    "nomeCompleto": "LUCAS BENEDITO DE OLIVEIRA DA SILVA",
+    "cidade": "JAPORA",
+    "telefone": "(67) 99112-2839"
+  },
+  {
+    "nome": "2SGT APARECIDO",
+    "nomeGuerra": "APARECIDO",
+    "nomeCompleto": "APARECIDO FERREIRA DA SILVA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99848-5300"
+  },
+  {
+    "nome": "2SGT CARLOS",
+    "nomeGuerra": "CARLOS",
+    "nomeCompleto": "CARLOS DOS SANTOS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99303-7229"
+  },
+  {
+    "nome": "2SGT CARLOS SILVA",
+    "nomeGuerra": "CARLOS SILVA",
+    "nomeCompleto": "CARLOS DA SILVA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99687-4018"
+  },
+  {
+    "nome": "2SGT LEAL",
+    "nomeGuerra": "LEAL",
+    "nomeCompleto": "MARCOS LEAL DA SILVA",
+    "cidade": "PORTO MORUMBI",
+    "telefone": "(67) 99601-5327"
+  },
+  {
+    "nome": "2SGT MARCOS",
+    "nomeGuerra": "MARCOS",
+    "nomeCompleto": "MARCOS ROBERTO BIANCHINI",
+    "cidade": "JAPORA",
+    "telefone": "(67) 98218-1857"
+  },
+  {
+    "nome": "2SGT OSVALDO",
+    "nomeGuerra": "OSVALDO",
+    "nomeCompleto": "OSVALDO COELHO NUNES",
+    "cidade": "JAPORA",
+    "telefone": "(67) 98128-5654"
+  },
+  {
+    "nome": "2SGT PIETROBELLI",
+    "nomeGuerra": "PIETROBELLI",
+    "nomeCompleto": "GICYLAU PIETROBELLI",
+    "cidade": "JAPORA",
+    "telefone": "(67) 98140-1871"
+  },
+  {
+    "nome": "2SGT VALE",
+    "nomeGuerra": "VALE",
+    "nomeCompleto": "ROBERTO CARLOS VALE",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99149-3063"
+  },
+  {
+    "nome": "2TEN ALEX JHONNY",
+    "nomeGuerra": "ALEX JHONNY",
+    "nomeCompleto": "ALEX JHONNY DA SILVA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99137-4000"
+  },
+  {
+    "nome": "3SGT AIRAN",
+    "nomeGuerra": "AIRAN",
+    "nomeCompleto": "AIRAN AMARAL RODRIGUES",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 9219-0418"
+  },
+  {
+    "nome": "3SGT EMERSON",
+    "nomeGuerra": "EMERSON",
+    "nomeCompleto": "ALESSANDRO EMERSON COELHO DOS SANTOS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99187-6896"
+  },
+  {
+    "nome": "3SGT IVAN",
+    "nomeGuerra": "IVAN",
+    "nomeCompleto": "IVAN DOS SANTOS SOUZA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99213-0116"
+  },
+  {
+    "nome": "3SGT MACIEL",
+    "nomeGuerra": "MACIEL",
+    "nomeCompleto": "WELVIS PEREIRA MACIEL",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99343-8786"
+  },
+  {
+    "nome": "3SGT MAKOTO",
+    "nomeGuerra": "MAKOTO",
+    "nomeCompleto": "MARIO JUNIOR MAKOTO SATO",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(44) 9143-4856"
+  },
+  {
+    "nome": "3SGT PAULO MARCOS",
+    "nomeGuerra": "PAULO MARCOS",
+    "nomeCompleto": "PAULO MARCOS ROSA DOS SANTOS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 9627-5100"
+  },
+  {
+    "nome": "3SGT SAMUEL",
+    "nomeGuerra": "SAMUEL",
+    "nomeCompleto": "SAMUEL PEREIRA",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99601-5327"
+  },
+  {
+    "nome": "3SGT VALDECIR",
+    "nomeGuerra": "VALDECIR",
+    "nomeCompleto": "VALDECIR PINHEIRO ALVES",
+    "cidade": "ELDORADO",
+    "telefone": "(44) 9829-4535"
+  },
+  {
+    "nome": "3SGT VIDIGAL",
+    "nomeGuerra": "VIDIGAL",
+    "nomeCompleto": "ALESSANDRO VIDIGAL DOS SANTOS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9286-7933"
+  },
+  {
+    "nome": "CAP FELIZOLA",
+    "nomeGuerra": "FELIZOLA",
+    "nomeCompleto": "WILSON BARBOSA FELIZOLA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99896-2540"
+  },
+  {
+    "nome": "CAP NEURI",
+    "nomeGuerra": "NEURI",
+    "nomeCompleto": "NEURI LUIZ ROSENI",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99120-7582"
+  },
+  {
+    "nome": "CAP NEURI",
+    "nomeGuerra": "NEURI",
+    "nomeCompleto": "NEURI LUIZ ROSENI",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99120-7582"
+  },
+  {
+    "nome": "CB BELMIRO",
+    "nomeGuerra": "BELMIRO",
+    "nomeCompleto": "REGINALDO BELMIRO MENDES",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 8114-4715"
+  },
+  {
+    "nome": "CB BORGES",
+    "nomeGuerra": "BORGES",
+    "nomeCompleto": "JHONATAN CARLOS CARNEIRO BORGES",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 9632-8188"
+  },
+  {
+    "nome": "CB CANDIDO",
+    "nomeGuerra": "CANDIDO",
+    "nomeCompleto": "DENIS CANDIDO DE OLIVEIRA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 8403-4480"
+  },
+  {
+    "nome": "CB CARINA",
+    "nomeGuerra": "CARINA",
+    "nomeCompleto": "CARINA MAYARA CESARE",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99281-6966"
+  },
+  {
+    "nome": "CB CARVALHO",
+    "nomeGuerra": "CARVALHO",
+    "nomeCompleto": "GEBERSON BONIFACIO DE CARVALHO",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99625-4621"
+  },
+  {
+    "nome": "CB CASSIO",
+    "nomeGuerra": "CASSIO",
+    "nomeCompleto": "BRUNO CASSIO PINHEIRO DOS SANTOS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99950-2181"
+  },
+  {
+    "nome": "CB CASTILHO",
+    "nomeGuerra": "CASTILHO",
+    "nomeCompleto": "CARLOS HENRIQUE CASTILHO DE LIMA MEDEIROS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99335-9214"
+  },
+  {
+    "nome": "CB CLAUDIO LOPES",
+    "nomeGuerra": "CLAUDIO LOPES",
+    "nomeCompleto": "CLAUDIO DE SOUZA LOPES",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9238-3799"
+  },
+  {
+    "nome": "CB DAYANE",
+    "nomeGuerra": "DAYANE",
+    "nomeCompleto": "DAYANE MADEIRA FONTES",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9630-7747"
+  },
+  {
+    "nome": "CB DE SOUZA",
+    "nomeGuerra": "DE SOUZA",
+    "nomeCompleto": "LEANDRO DE SOUZA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99121-4808"
+  },
+  {
+    "nome": "CB DENYS",
+    "nomeGuerra": "DENYS",
+    "nomeCompleto": "DENYS RAFAEL FRANCISCO PHELIPPE HAVEROTH",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99196-3884"
+  },
+  {
+    "nome": "CB E MARTINS",
+    "nomeGuerra": "E MARTINS",
+    "nomeCompleto": "EDUARDO BACHEGA MARTINS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(44) 99842-7083"
+  },
+  {
+    "nome": "CB EDGAR",
+    "nomeGuerra": "EDGAR",
+    "nomeCompleto": "EDGAR BACHEGA MARTINS",
+    "cidade": "ELDORADO",
+    "telefone": "(44) 99828-6576"
+  },
+  {
+    "nome": "CB EMERSON",
+    "nomeGuerra": "EMERSON",
+    "nomeCompleto": "EMERSON ROMARIO SENE PORTEIRO",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99257-1239"
+  },
+  {
+    "nome": "CB FERNANDO",
+    "nomeGuerra": "FERNANDO",
+    "nomeCompleto": "NIJEUDO FERNANDO ACOSTA DA SILVA",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 97400-7458"
+  },
+  {
+    "nome": "CB MAICON",
+    "nomeGuerra": "MAICON",
+    "nomeCompleto": "MAICON BATISTA SILVA",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99618-2125"
+  },
+  {
+    "nome": "CB NATALICIO",
+    "nomeGuerra": "NATALICIO",
+    "nomeCompleto": "EDERSON NATALICIO MARSCHNER",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(45) 93300-5837"
+  },
+  {
+    "nome": "CB NOVAES",
+    "nomeGuerra": "NOVAES",
+    "nomeCompleto": "JEFFERSON NOVAES DA SILVA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99104-9582"
+  },
+  {
+    "nome": "CB PEREIRA",
+    "nomeGuerra": "PEREIRA",
+    "nomeCompleto": "LEANDRO PAVAO PEREIRA DIAS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99155-0791"
+  },
+  {
+    "nome": "CB UELTON",
+    "nomeGuerra": "UELTON",
+    "nomeCompleto": "UELTON FRANCA OLIVEIRA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99866-8343"
+  },
+  {
+    "nome": "CB WILLIAN",
+    "nomeGuerra": "WILLIAN",
+    "nomeCompleto": "WILLIAN MORIS BACCIN",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99161-1688"
+  },
+  {
+    "nome": "MAJ CAMARGO",
+    "nomeGuerra": "CAMARGO",
+    "nomeCompleto": "GESSÉ CAMARGO JÚNIOR",
+    "cidade": "CPA 4",
+    "telefone": "(67) 98473-2035"
+  },
+  {
+    "nome": "MAJOR PECHEFIST",
+    "nomeGuerra": "PECHEFIST",
+    "nomeCompleto": "ADRIANO PECHEFIST",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99343-1853"
+  },
+  {
+    "nome": "SD ADRIANO",
+    "nomeGuerra": "ADRIANO",
+    "nomeCompleto": "ADRIANO GONÇALVES LEITE",
+    "cidade": "ELDORADO",
+    "telefone": "(44) 8837-0729"
+  },
+  {
+    "nome": "SD ALISSON",
+    "nomeGuerra": "ALISSON",
+    "nomeCompleto": "ALISSON FERNANDO DOS SANTOS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99113-0188"
+  },
+  {
+    "nome": "SD ALMEIDA",
+    "nomeGuerra": "ALMEIDA",
+    "nomeCompleto": "BRUNO DOS SANTOS ALMEIDA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99171-6666"
+  },
+  {
+    "nome": "SD BRUNO",
+    "nomeGuerra": "BRUNO",
+    "nomeCompleto": "BRUNO DA SILVA MACHADO",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 9824-8774"
+  },
+  {
+    "nome": "SD D BRITO",
+    "nomeGuerra": "D BRITO",
+    "nomeCompleto": "DOUGLAS BRITO DE OLIVEIRA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99921-3262"
+  },
+  {
+    "nome": "SD DIAS",
+    "nomeGuerra": "DIAS",
+    "nomeCompleto": "WILLIAN COSTA DIAS",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 99636-7840"
+  },
+  {
+    "nome": "SD EDLENE",
+    "nomeGuerra": "EDLENE",
+    "nomeCompleto": "EDLENE DE SOUZA HAVEROTH",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99234-6493"
+  },
+  {
+    "nome": "SD EDUARDO",
+    "nomeGuerra": "EDUARDO",
+    "nomeCompleto": "EDUARDO DE SOUZA LOPES",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99943-5562"
+  },
+  {
+    "nome": "SD FLAVIO",
+    "nomeGuerra": "FLAVIO",
+    "nomeCompleto": "FLAVIO ALVES RIBEIRO",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 98130-7971"
+  },
+  {
+    "nome": "SD HELLEN",
+    "nomeGuerra": "HELLEN",
+    "nomeCompleto": "HELLEN LORRAINE ROCHA FRANÇA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99618-0446"
+  },
+  {
+    "nome": "SD JOAO REIS",
+    "nomeGuerra": "JOAO REIS",
+    "nomeCompleto": "JOAO VICTOR RAMALHO REIS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9257-3425"
+  },
+  {
+    "nome": "SD LEANDRO",
+    "nomeGuerra": "LEANDRO",
+    "nomeCompleto": "LEANDRO BRUNO DA SILVA DOS SANTOS",
+    "cidade": "ELDORADO",
+    "telefone": "(44) 8860-0642"
+  },
+  {
+    "nome": "SD M.MEDEIROS",
+    "nomeGuerra": "M.MEDEIROS",
+    "nomeCompleto": "MURILO HENRIQUE MEDEIROS ROSA",
+    "cidade": "PORTO MORUMBI",
+    "telefone": "(67) 98475-1953"
+  },
+  {
+    "nome": "SD MATTHEUS",
+    "nomeGuerra": "MATTHEUS",
+    "nomeCompleto": "MATTHEUS ROCHA LEITE",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 8433-7747"
+  },
+  {
+    "nome": "SD MONTANINI",
+    "nomeGuerra": "MONTANINI",
+    "nomeCompleto": "VINICIUS MUNIZ MONTANINI",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99862-2674"
+  },
+  {
+    "nome": "SD MORAES NETO",
+    "nomeGuerra": "MORAES NETO",
+    "nomeCompleto": "ELISEO BRITES DE MORAES NETO",
+    "cidade": "IGUATEMI",
+    "telefone": "(45) 99851-5329"
+  },
+  {
+    "nome": "SD SULIANO",
+    "nomeGuerra": "SULIANO",
+    "nomeCompleto": "VANDER LUIS SULIANO DOS SANTOS",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 98207-1380"
+  },
+  {
+    "nome": "SD TALITA",
+    "nomeGuerra": "TALITA",
+    "nomeCompleto": "TALITA CARLA NORBERTO",
+    "cidade": "ELDORADO",
+    "telefone": "(44) 98803-8331"
+  },
+  {
+    "nome": "SD TIBER",
+    "nomeGuerra": "TIBER",
+    "nomeCompleto": "ANTONIO CARLOS TIBER",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 98100-2902"
+  },
+  {
+    "nome": "SD ZART",
+    "nomeGuerra": "ZART",
+    "nomeCompleto": "CRISTYANN ADRIANO ZART",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99941-0251"
+  },
+  {
+    "nome": "ST ANDRE",
+    "nomeGuerra": "ANDRE",
+    "nomeCompleto": "LUCIMAR ALMEIDA ANDRE",
+    "cidade": "JAPORA",
+    "telefone": "(67) 9299-0266"
+  },
+  {
+    "nome": "ST CLAUDIO",
+    "nomeGuerra": "CLAUDIO",
+    "nomeCompleto": "CLAUDIO JAIR GUCKERT",
+    "cidade": "IGUATEMI",
+    "telefone": "(67) 9878-4513"
+  },
+  {
+    "nome": "ST CLAUDIO",
+    "nomeGuerra": "CLAUDIO",
+    "nomeCompleto": "CLAUDIO JODIVAN CAVALCANTE",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99228-0417"
+  },
+  {
+    "nome": "ST DE SOUZA",
+    "nomeGuerra": "DE SOUZA",
+    "nomeCompleto": "REGINALDO PEREIRA DE SOUZA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99846-5607"
+  },
+  {
+    "nome": "ST GIMENES",
+    "nomeGuerra": "GIMENES",
+    "nomeCompleto": "EDSON GIMENES",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 99281-4774"
+  },
+  {
+    "nome": "ST NILSON",
+    "nomeGuerra": "NILSON",
+    "nomeCompleto": "NILSON OTAVIANO DA SILVA",
+    "cidade": "MUNDO NOVO",
+    "telefone": "(67) 9278-6960"
+  },
+  {
+    "nome": "ST OLIVEIRA",
+    "nomeGuerra": "OLIVEIRA",
+    "nomeCompleto": "ANTONIO DE OLIVEIRA",
+    "cidade": "ELDORADO",
+    "telefone": "(67) 99946-7840"
+  }
+],
           turnosAbertos: [
             { idTurno: '20261118-SEDE-RP01-SIM', data: '18/11/2026', fracao: 'Sede', posto: 'RP 01', vtr: 'REW-3B07', kmInicial: 45200, cmt: '1SGT LUCIANO' }
           ],
@@ -573,7 +1125,7 @@
       configurarCamposEfetivo(padrao.cidades);
     } else {
       // Para OPM customizada ("Cadastrar OPM"), habilita o efetivo de todas as cidades
-      configurarCamposEfetivo(['MUNDO NOVO', 'IGUATEMI', 'JAPORA', 'ELDORADO', 'PORTO MORUMBI']);
+      configurarCamposEfetivo(['MUNDO NOVO', 'IGUATEMI', 'JAPORA', 'ELDORADO', 'PORTO MORUMBI', 'CPA 4']);
     }
   }
 
@@ -585,6 +1137,27 @@
       return custom || 'Outra Equipe';
     }
     return rad.value;
+  }
+
+  function selecionarRadioEquipe(val) {
+    const r1 = document.getElementById('eq-rp01');
+    const r2 = document.getElementById('eq-rp02');
+    const rOutra = document.getElementById('eq-outra');
+    const campoOutra = document.getElementById('campoEquipeOutra');
+
+    if (val === 'RP 01') {
+      r1.checked = true;
+      campoOutra.classList.add('hidden');
+    } else if (val === 'RP 02') {
+      r2.checked = true;
+      campoOutra.classList.add('hidden');
+    } else {
+      rOutra.checked = true;
+      campoOutra.classList.remove('hidden');
+      if (val !== 'Outra' && val) {
+        document.getElementById('equipeCustom').value = val;
+      }
+    }
   }
 
   function aoMudarEquipeOpcao(val) {
@@ -619,29 +1192,34 @@
     }
   }
 
-  // ── Helpers para Telefone do Policial no WhatsApp ────────────────────────
-  function obterTelefonePolicial(nomePolicial) {
-    if (!nomePolicial) return '';
-    const normalizar = (s) => (s || '')
-      .toUpperCase()
+  // ── Normalização de texto e Telefones ─────────────────────────────────────
+  function normalizarTexto(s) {
+    return (s || '')
+      .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^A-Z0-9\s]/g, '')
       .trim();
+  }
 
-    const alvo = normalizar(nomePolicial);
+  function obterTelefonePolicial(nomePolicial) {
+    if (!nomePolicial) return '';
+    const alvo = normalizarTexto(nomePolicial);
     if (!alvo) return '';
 
-    // 1. Busca exata pelo nome completo de exibição
-    let achado = listaEfetivo.find(p => normalizar(p.nome) === alvo);
+    // 1. Busca exata pelo nome completo de exibição (ex: "3SGT AIRAN")
+    let achado = listaEfetivo.find(p => normalizarTexto(p.nome) === alvo);
     if (achado && achado.telefone) return achado.telefone;
 
-    // 2. Busca pelo nome de guerra contido no alvo
+    // 2. Busca por nome de guerra
+    achado = listaEfetivo.find(p => normalizarTexto(p.nomeGuerra) === alvo);
+    if (achado && achado.telefone) return achado.telefone;
+
+    // 3. Busca por inclusão (exibição, guerra ou nome completo)
     achado = listaEfetivo.find(p => {
-      const pNome = normalizar(p.nome);
-      const partes = pNome.split(/\s+/);
-      const guerra = partes[partes.length - 1];
-      return alvo === pNome || alvo.includes(pNome) || pNome.includes(alvo) || (guerra && alvo.includes(guerra));
+      const pNome = normalizarTexto(p.nome);
+      const pGuerra = normalizarTexto(p.nomeGuerra);
+      const pCompl = normalizarTexto(p.nomeCompleto);
+      return alvo.includes(pGuerra) || (pCompl && (alvo.includes(pCompl) || pCompl.includes(alvo))) || pNome.includes(alvo);
     });
 
     if (achado && achado.telefone) return achado.telefone;
@@ -655,7 +1233,14 @@
     return `\n*${cargo}:* ${nome}${sufixoTel}`;
   }
 
-  // ── Campos de Efetivo (Busca digitada + Navegação na lista completa) ──────
+  function formatarDataBr(isoData) {
+    if (!isoData) return '';
+    const p = isoData.split('-');
+    if (p.length === 3) return `${p[2]}/${p[1]}/${p[0]}`;
+    return isoData;
+  }
+
+  // ── Campos de Efetivo (Busca inteligente + Dropdown com rolagem) ─────────
   function configurarCamposEfetivo(cidadesP) {
     configurarBuscaCampo('cmt', 'dropdown-cmt', cidadesP, 'Selecione o Comandante', aoSelecionarComandante);
     configurarBuscaCampo('motorista', 'dropdown-motorista', cidadesP, 'Selecione o Motorista');
@@ -670,10 +1255,19 @@
 
     function renderizar(filtro = '') {
       dropdown.innerHTML = '';
-      const f = filtro.toLowerCase().trim();
+      const f = normalizarTexto(filtro);
+      const cidadesNorm = cidadesP.map(c => normalizarTexto(c));
 
-      const locais = listaEfetivo.filter(p => cidadesP.includes(p.cidade) && (!f || p.nome.toLowerCase().includes(f)));
-      const outros = listaEfetivo.filter(p => !cidadesP.includes(p.cidade) && (!f || p.nome.toLowerCase().includes(f)));
+      function policialCorresponde(p) {
+        if (!f) return true;
+        const nomeNorm   = normalizarTexto(p.nome);
+        const guerraNorm = normalizarTexto(p.nomeGuerra);
+        const complNorm  = normalizarTexto(p.nomeCompleto);
+        return nomeNorm.includes(f) || guerraNorm.includes(f) || complNorm.includes(f);
+      }
+
+      const locais = listaEfetivo.filter(p => cidadesNorm.includes(normalizarTexto(p.cidade)) && policialCorresponde(p));
+      const outros = listaEfetivo.filter(p => !cidadesNorm.includes(normalizarTexto(p.cidade)) && policialCorresponde(p));
 
       if (locais.length === 0 && outros.length === 0) {
         dropdown.innerHTML = '<div class="p-3 text-xs text-gray-400 text-center">Nenhum militar encontrado</div>';
@@ -703,7 +1297,7 @@
       if (outros.length) {
         const h2 = document.createElement('div');
         h2.className = 'px-3 py-1.5 bg-slate-100 text-[11px] font-bold text-gray-600 uppercase tracking-wider sticky top-0 border-b border-slate-200';
-        h2.textContent = '🔄 Outros Pelotões';
+        h2.textContent = '🔄 Outros Pelotões / Efetivo Geral';
         dropdown.appendChild(h2);
 
         outros.forEach(p => {
@@ -730,13 +1324,14 @@
       renderizar(input.value);
       dropdown.classList.remove('hidden');
       if (idInput === 'cmt') {
-        const achado = listaEfetivo.find(p => p.nome.toLowerCase() === input.value.trim().toLowerCase());
+        const f = normalizarTexto(input.value);
+        const achado = listaEfetivo.find(p => normalizarTexto(p.nome) === f || normalizarTexto(p.nomeGuerra) === f);
         if (achado && onSelectCallback) onSelectCallback(achado.nome);
       }
     };
 
     input.onblur = () => {
-      setTimeout(() => dropdown.classList.add('hidden'), 200);
+      setTimeout(() => dropdown.classList.add('hidden'), 250);
     };
   }
 
@@ -744,7 +1339,6 @@
     const dropdown = document.getElementById(idDropdown);
     if (!dropdown) return;
     const estaOculto = dropdown.classList.contains('hidden');
-    // Fecha outros dropdowns
     document.querySelectorAll('[id^="dropdown-"]').forEach(d => d.classList.add('hidden'));
     if (estaOculto) {
       dropdown.classList.remove('hidden');
@@ -783,92 +1377,287 @@
     }
   }
 
-  // ── Enviar Assunção ──────────────────────────────────────────────────────
-  function enviarAssuncao(idTurnoAtualizar) {
-    const btn = document.getElementById('btnSalvarAssuncao');
-    const btnAtualizar = document.getElementById('btnAtualizarEquipe');
-
-    // Validação básica
+  // ── Gestão de Múltiplas Equipes na Assunção ──────────────────────────────
+  function capturarEquipeFormulario() {
     const cmt = document.getElementById('cmt').value.trim();
     const km  = document.getElementById('kmInicial').value;
-    if (!cmt) { alert('Selecione o Comandante antes de salvar.'); return; }
-    if (!km)  { alert('Informe o KM Inicial antes de salvar.'); return; }
 
-    const isAtualizacao = Boolean(idTurnoAtualizar);
+    if (!cmt) {
+      alert('Selecione ou digite o Comandante da equipe.');
+      document.getElementById('cmt').focus();
+      return null;
+    }
+    if (!km) {
+      alert('Informe o KM Inicial da viatura.');
+      document.getElementById('kmInicial').focus();
+      return null;
+    }
+
+    return {
+      posto:         obterEquipeSelecionada(),
+      regime:        document.getElementById('regime').value,
+      vtrPlaca:      document.getElementById('vtrPlaca').value.trim(),
+      vtrPrefixo:    document.getElementById('vtrPrefixo').value.trim(),
+      kmInicial:     km,
+      materialCarga: document.getElementById('materialCarga').value.trim() || 'S/A',
+      cmt:           cmt,
+      motorista:     document.getElementById('motorista').value.trim(),
+      patrulheiro:   document.getElementById('patrulheiro').value.trim(),
+      despachante:   document.getElementById('despachante').value.trim(),
+      obs:           document.getElementById('obs').value.trim(),
+      idTurnoAtualizar: (indiceEquipeEmEdicao >= 0 && equipesAssuncao[indiceEquipeEmEdicao])
+        ? equipesAssuncao[indiceEquipeEmEdicao].idTurnoAtualizar
+        : null
+    };
+  }
+
+  function adicionarOutraEquipe() {
+    const eq = capturarEquipeFormulario();
+    if (!eq) return;
+
+    if (indiceEquipeEmEdicao >= 0) {
+      equipesAssuncao[indiceEquipeEmEdicao] = eq;
+      indiceEquipeEmEdicao = -1;
+    } else {
+      equipesAssuncao.push(eq);
+    }
+
+    renderizarCardsEquipes();
+    limparFormularioParaNovaEquipe();
+
+    const sec = document.getElementById('secaoEquipe');
+    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function adicionarOutraEquipePosSalvar() {
+    limparFormularioParaNovaEquipe();
+    document.getElementById('containerBotoesPreSalvar').classList.remove('hidden');
+    document.getElementById('resultadoAssuncao').classList.add('hidden');
+    document.getElementById('secaoEquipe').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function limparFormularioParaNovaEquipe() {
+    indiceEquipeEmEdicao = -1;
+
+    // Próximo posto sugerido
+    const postosUsados = equipesAssuncao.map(e => e.posto);
+    if (!postosUsados.includes('RP 01')) {
+      selecionarRadioEquipe('RP 01');
+    } else if (!postosUsados.includes('RP 02')) {
+      selecionarRadioEquipe('RP 02');
+    } else {
+      selecionarRadioEquipe('Outra');
+      document.getElementById('equipeCustom').value = '';
+    }
+
+    // Limpa campos
+    document.getElementById('vtrPlaca').value = '';
+    document.getElementById('vtrPrefixo').value = '';
+    document.getElementById('kmInicial').value = '';
+    document.getElementById('materialCarga').value = 'S/A';
+    document.getElementById('cmt').value = '';
+    document.getElementById('motorista').value = '';
+    document.getElementById('patrulheiro').value = '';
+    document.getElementById('despachante').value = '';
+    document.getElementById('obs').value = '';
+
+    const hintCmt = document.getElementById('hintEquipeCmt');
+    if (hintCmt) hintCmt.classList.add('hidden');
+    const hintKm = document.getElementById('hintKmInicialVtr');
+    if (hintKm) hintKm.classList.add('hidden');
+
+    const btnAdd = document.getElementById('btnAdicionarOutraEquipe');
+    if (btnAdd) btnAdd.innerHTML = '➕ Adicionar outra Equipe';
+  }
+
+  function renderizarCardsEquipes() {
+    const container = document.getElementById('containerEquipesAdicionadas');
+    const listaDiv = document.getElementById('listaCardsEquipes');
+    const badgeQtd = document.getElementById('badgeQtdEquipes');
+
+    if (!equipesAssuncao.length) {
+      container.classList.add('hidden');
+      listaDiv.innerHTML = '';
+      return;
+    }
+
+    container.classList.remove('hidden');
+    badgeQtd.textContent = equipesAssuncao.length;
+    listaDiv.innerHTML = '';
+
+    equipesAssuncao.forEach((eq, idx) => {
+      const card = document.createElement('div');
+      card.className = 'bg-white border border-blue-200 rounded-lg p-2.5 flex items-center justify-between text-xs font-semibold shadow-sm';
+
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'flex items-center gap-2 flex-wrap';
+      infoDiv.innerHTML = `
+        <span class="bg-pm-marinho text-white px-2 py-0.5 rounded text-[11px] font-black">${eq.posto}</span>
+        <span class="text-gray-900 font-bold">${eq.cmt}</span>
+        ${eq.vtrPlaca ? `<span class="text-gray-500 font-medium">• VTR ${eq.vtrPlaca} (KM ${eq.kmInicial})</span>` : ''}
+      `;
+
+      const btnsDiv = document.createElement('div');
+      btnsDiv.className = 'flex items-center gap-1.5 shrink-0';
+      btnsDiv.innerHTML = `
+        <button type="button" onclick="editarEquipe(${idx})" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-blue-900 rounded font-bold text-[11px] transition-colors border border-slate-300">✏️ Editar</button>
+        <button type="button" onclick="removerEquipe(${idx})" class="px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded font-bold text-[11px] transition-colors border border-red-200">🗑️</button>
+      `;
+
+      card.appendChild(infoDiv);
+      card.appendChild(btnsDiv);
+      listaDiv.appendChild(card);
+    });
+  }
+
+  function editarEquipe(idx) {
+    const eq = equipesAssuncao[idx];
+    if (!eq) return;
+
+    indiceEquipeEmEdicao = idx;
+    selecionarRadioEquipe(eq.posto);
+
+    document.getElementById('regime').value = eq.regime || '24h';
+    document.getElementById('vtrPlaca').value = eq.vtrPlaca || '';
+    document.getElementById('vtrPrefixo').value = eq.vtrPrefixo || '';
+    document.getElementById('kmInicial').value = eq.kmInicial || '';
+    document.getElementById('materialCarga').value = eq.materialCarga || 'S/A';
+    document.getElementById('cmt').value = eq.cmt || '';
+    document.getElementById('motorista').value = eq.motorista || '';
+    document.getElementById('patrulheiro').value = eq.patrulheiro || '';
+    document.getElementById('despachante').value = eq.despachante || '';
+    document.getElementById('obs').value = eq.obs || '';
+
+    const btnAdd = document.getElementById('btnAdicionarOutraEquipe');
+    if (btnAdd) btnAdd.innerHTML = '💾 Salvar Alterações desta Equipe';
+
+    document.getElementById('secaoEquipe').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function removerEquipe(idx) {
+    if (confirm(`Deseja remover a equipe ${equipesAssuncao[idx].posto} desta lista?`)) {
+      equipesAssuncao.splice(idx, 1);
+      if (indiceEquipeEmEdicao === idx) {
+        limparFormularioParaNovaEquipe();
+      }
+      renderizarCardsEquipes();
+    }
+  }
+
+  // ── Montagem do Texto Unificado do WhatsApp para Todas as Equipes ────────
+  function gerarTextoWhatsAppAssuncao(dadosGerais, listaEquipes) {
+    let msg = `Assunção de Serviço: *${dadosGerais.fracao}*\n`;
+    msg += `Data: ${formatarDataBr(dadosGerais.data)} - ${dadosGerais.hora}\n`;
+
+    listaEquipes.forEach((eq) => {
+      if (listaEquipes.length > 1) {
+        msg += `\n----------------------------------------\n`;
+        msg += `*EQUIPE: ${eq.posto.toUpperCase()}*\n`;
+      } else {
+        msg += `\n*Equipe:* ${eq.posto}\n`;
+      }
+
+      msg += `Material carga e equipe: ${eq.materialCarga || 'S/A'}\n`;
+      if (eq.vtrPlaca) {
+        const pref = eq.vtrPrefixo ? ` (${eq.vtrPrefixo})` : '';
+        msg += `Vtr ${eq.vtrPlaca.toUpperCase()}${pref} - km inicial: ${eq.kmInicial}\n`;
+      }
+      msg += formatarPolicialComTelefone('COMANDANTE', eq.cmt);
+      if (eq.motorista)   msg += formatarPolicialComTelefone('Motorista', eq.motorista);
+      if (eq.patrulheiro) msg += formatarPolicialComTelefone('Patrulheiro', eq.patrulheiro);
+      if (eq.despachante) msg += formatarPolicialComTelefone('Despachante', eq.despachante);
+      if (eq.obs)         msg += `\n*Obs:* ${eq.obs}`;
+    });
+
+    if (dadosGerais.telefone) {
+      msg += `\n\n*Telefone Funcional:* ${dadosGerais.telefone}`;
+    }
+    return msg;
+  }
+
+  // ── Salvar Todas as Equipes na Planilha ──────────────────────────────────
+  function salvarTodasEquipes(isAtualizacao) {
+    const btnSalvar = document.getElementById('btnSalvarAssuncao');
+    const btnAtualizar = document.getElementById('btnAtualizarEquipe');
+
+    // Se o formulário tiver Comandante preenchido no momento, inclui a equipe atual na lista
+    const cmtAtual = document.getElementById('cmt').value.trim();
+    const kmAtual  = document.getElementById('kmInicial').value;
+    if (cmtAtual && kmAtual) {
+      const eqAtual = capturarEquipeFormulario();
+      if (eqAtual) {
+        if (indiceEquipeEmEdicao >= 0) {
+          equipesAssuncao[indiceEquipeEmEdicao] = eqAtual;
+          indiceEquipeEmEdicao = -1;
+        } else {
+          const jaExiste = equipesAssuncao.some(e => e.posto === eqAtual.posto && e.cmt === eqAtual.cmt);
+          if (!jaExiste) {
+            equipesAssuncao.push(eqAtual);
+          }
+        }
+        renderizarCardsEquipes();
+      }
+    }
+
+    if (!equipesAssuncao.length) {
+      alert('Informe ao menos uma equipe com Comandante e KM Inicial antes de salvar.');
+      document.getElementById('cmt').focus();
+      return;
+    }
+
+    const opm = obterOpmSelecionada();
+    const dadosGerais = {
+      data:     document.getElementById('data').value,
+      hora:     document.getElementById('hora').value,
+      fracao:   opm,
+      telefone: document.getElementById('telefone').value.trim(),
+      equipes:  equipesAssuncao
+    };
+
     if (isAtualizacao) {
       if (btnAtualizar) {
         btnAtualizar.disabled = true;
         btnAtualizar.innerHTML = '<span class="spinner">⟳</span>&nbsp; Atualizando na planilha...';
       }
     } else {
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner">⟳</span>&nbsp; Salvando na planilha...';
+      if (btnSalvar) {
+        btnSalvar.disabled = true;
+        btnSalvar.innerHTML = '<span class="spinner">⟳</span>&nbsp; Salvando equipes na planilha...';
       }
     }
 
-    const opm = obterOpmSelecionada();
-    const equipe = obterEquipeSelecionada();
-
-    const dados = {
-      idTurnoAtualizar: idTurnoAtualizar || null,
-      data:          document.getElementById('data').value,
-      hora:          document.getElementById('hora').value,
-      fracao:        opm,
-      posto:         equipe,
-      regime:        document.getElementById('regime').value,
-      vtrPlaca:      document.getElementById('vtrPlaca').value.trim(),
-      vtrPrefixo:    document.getElementById('vtrPrefixo').value.trim(),
-      kmInicial:     document.getElementById('kmInicial').value,
-      materialCarga: document.getElementById('materialCarga').value.trim(),
-      cmt:           cmt,
-      motorista:     document.getElementById('motorista').value.trim(),
-      patrulheiro:   document.getElementById('patrulheiro').value.trim(),
-      despachante:   document.getElementById('despachante').value.trim(),
-      telefone:      document.getElementById('telefone').value.trim(),
-      obs:           document.getElementById('obs').value.trim()
-    };
-
     function processarSucesso(res) {
-      ultimoIdTurnoSalvo = res.idTurno || idTurnoAtualizar || ('LOCAL-' + Date.now());
-
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = '💾 Salvar';
-        btn.classList.add('hidden'); // O botão salvar se transforma nos 4 botões
+      if (btnSalvar) {
+        btnSalvar.disabled = false;
+        btnSalvar.innerHTML = '💾 Salvar Assunção';
       }
       if (btnAtualizar) {
         btnAtualizar.disabled = false;
         btnAtualizar.innerHTML = '🔄 ATUALIZAR';
       }
 
+      document.getElementById('containerBotoesPreSalvar').classList.add('hidden');
+
+      if (res.idTurnos && Array.isArray(res.idTurnos)) {
+        res.idTurnos.forEach((id, i) => {
+          if (equipesAssuncao[i]) equipesAssuncao[i].idTurnoAtualizar = id;
+        });
+      }
+
       const banner = document.getElementById('bannerStatusAssuncao');
       if (banner) {
         banner.className = 'banner-ok';
-        banner.textContent = res.atualizado 
-          ? '✅ Equipe ATUALIZADA com sucesso na planilha!'
-          : '✅ Equipe salva com sucesso na planilha!';
+        banner.textContent = res.atualizado
+          ? `✅ ${equipesAssuncao.length} equipe(s) ATUALIZADA(S) com sucesso na planilha!`
+          : `✅ ${equipesAssuncao.length} equipe(s) salva(s) com sucesso na planilha!`;
       }
 
-      // Monta mensagem padronizada oficial
-      let msg = `Assunção de Serviço: *${dados.fracao}*\n`;
-      msg += `Equipe: *${dados.posto}*\n`;
-      msg += `Material carga e equipe: ${dados.materialCarga}\n`;
-      if (dados.vtrPlaca) {
-        const pref = dados.vtrPrefixo ? ` (${dados.vtrPrefixo})` : '';
-        msg += `Vtr ${dados.vtrPlaca.toUpperCase()}${pref} - km inicial: ${dados.kmInicial}\n`;
-      }
-      msg += formatarPolicialComTelefone('COMANDANTE', dados.cmt);
-      if (dados.motorista)   msg += formatarPolicialComTelefone('Motorista', dados.motorista);
-      if (dados.patrulheiro) msg += formatarPolicialComTelefone('Patrulheiro', dados.patrulheiro);
-      if (dados.despachante) msg += formatarPolicialComTelefone('Despachante', dados.despachante);
-      if (dados.telefone)    msg += `\n*Telefone Funcional:* ${dados.telefone}`;
-      if (dados.obs)         msg += `\n\n*Obs:* ${dados.obs}`;
+      const msg = gerarTextoWhatsAppAssuncao(dadosGerais, equipesAssuncao);
 
       document.getElementById('previewAssuncao').textContent = msg;
       document.getElementById('linkWhatsAssuncao').href =
         'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
-      
+
       const resContainer = document.getElementById('resultadoAssuncao');
       resContainer.classList.remove('hidden');
       resContainer.scrollIntoView({ behavior: 'smooth' });
@@ -878,7 +1667,6 @@
       google.script.run
         .withSuccessHandler(function (res) {
           processarSucesso(res);
-          // Atualiza turnos e histórico
           google.script.run.withSuccessHandler(function (r) {
             listaTurnos = r.turnosAbertos || [];
             kmPorVtr = r.kmPorVtr || kmPorVtr;
@@ -887,80 +1675,28 @@
           }).getDadosIniciais();
         })
         .withFailureHandler(function (err) {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = '💾 Salvar';
+          if (btnSalvar) {
+            btnSalvar.disabled = false;
+            btnSalvar.innerHTML = '💾 Salvar Assunção';
           }
           if (btnAtualizar) {
             btnAtualizar.disabled = false;
             btnAtualizar.innerHTML = '🔄 ATUALIZAR';
           }
-          mostrarBannerErro('Erro ao salvar a assunção: ' + err.message);
+          mostrarBannerErro('Erro ao salvar equipes: ' + err.message);
         })
-        .salvarAssuncao(dados);
+        .salvarAssuncao(dadosGerais);
     } else {
-      // Mock local para testes no navegador
+      // Mock local
       setTimeout(function () {
-        processarSucesso({ sucesso: true, idTurno: idTurnoAtualizar || 'LOCAL-SIMULADO-1', atualizado: Boolean(idTurnoAtualizar) });
-      }, 300);
+        const mockIds = equipesAssuncao.map((e, i) => 'LOCAL-' + Date.now() + '-' + i);
+        processarSucesso({ sucesso: true, idTurnos: mockIds, atualizado: Boolean(isAtualizacao) });
+      }, 350);
     }
   }
 
-  // BOTÃO 1: Adicionar equipe na mesma OPM
-  function adicionarEquipeMesmaOpm() {
-    ultimoIdTurnoSalvo = null;
-
-    // Seleciona RP 02 por padrão para a nova equipe
-    const radioRp02 = document.getElementById('eq-rp02');
-    if (radioRp02) {
-      radioRp02.checked = true;
-      aoMudarEquipeOpcao('RP 02');
-    }
-    const campoOutra = document.getElementById('campoEquipeOutra');
-    if (campoOutra) campoOutra.classList.add('hidden');
-    const eqCustom = document.getElementById('equipeCustom');
-    if (eqCustom) eqCustom.value = '';
-
-    // Limpa campos da guarnição anterior
-    document.getElementById('cmt').value = '';
-    document.getElementById('motorista').value = '';
-    document.getElementById('patrulheiro').value = '';
-    document.getElementById('despachante').value = '';
-    document.getElementById('obs').value = '';
-    const hintCmt = document.getElementById('hintEquipeCmt');
-    if (hintCmt) hintCmt.classList.add('hidden');
-
-    // Limpa viatura para a nova equipe
-    document.getElementById('vtrPlaca').value = '';
-    document.getElementById('vtrPrefixo').value = '';
-    document.getElementById('kmInicial').value = '';
-    const hintKm = document.getElementById('hintKmInicialVtr');
-    if (hintKm) hintKm.classList.add('hidden');
-
-    // Reexibe o botão Salvar e oculta o container de 4 botões
-    const btnSalvar = document.getElementById('btnSalvarAssuncao');
-    if (btnSalvar) {
-      btnSalvar.classList.remove('hidden');
-      btnSalvar.disabled = false;
-      btnSalvar.innerHTML = '💾 Salvar';
-    }
-    const resContainer = document.getElementById('resultadoAssuncao');
-    if (resContainer) {
-      resContainer.classList.add('hidden');
-    }
-
-    // Rolagem suave de volta para a seção da Equipe
-    const sec = document.getElementById('secaoEquipe');
-    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  // BOTÃO 2: ATUALIZAR (editar a equipe atual salva)
-  function atualizarEquipeAtual() {
-    if (!ultimoIdTurnoSalvo) {
-      alert('Nenhum registro recente encontrado para atualizar. Use o botão Salvar.');
-      return;
-    }
-    enviarAssuncao(ultimoIdTurnoSalvo);
+  function atualizarAssuncao() {
+    salvarTodasEquipes(true);
   }
 
   // ── Turnos abertos (Encerramento) ────────────────────────────────────────
@@ -1030,7 +1766,7 @@
       btn.innerHTML = '🔒 Encerrar Turno e Gerar WhatsApp';
 
       let msg = `Passagem de Serviço: *${turno ? turno.fracao : 'Sede'}*\n`;
-      msg += `Data: ${turno ? turno.data : '18/11/2026'} | ${turno ? turno.posto : 'RP 01'}\n`;
+      msg += `Data: ${turno ? turno.data : '19/11/2026'} | ${turno ? turno.posto : 'RP 01'}\n`;
       if (turno && turno.vtr) {
         msg += `Vtr ${turno.vtr} – km final: ${dados.kmFinal} (Rodado: ${res.kmRodado} km)\n`;
       }
@@ -1100,7 +1836,7 @@
     setTimeout(() => div.remove(), 8000);
   }
 
-  </script>
+</script>
 
 </body>
 </html>
