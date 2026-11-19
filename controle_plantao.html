@@ -720,16 +720,6 @@
         });
       }
     }
-          item.onmousedown = (e) => {
-            e.preventDefault();
-            input.value = p.nome;
-            dropdown.classList.add('hidden');
-            if (onSelectCallback) onSelectCallback(p.nome);
-          };
-          dropdown.appendChild(item);
-        });
-      }
-    }
 
     input.onfocus = () => {
       renderizar(input.value);
